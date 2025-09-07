@@ -1,0 +1,3221 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Koperasi Simpan Pinjam - SMPK Ov SLAMET RIYADI REMBANG</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        .sidebar-active { background-color: #3b82f6; color: white; }
+        .fade-in { animation: fadeIn 0.3s ease-in; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        .modal { display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.5); }
+        .modal.show { display: flex; align-items: center; justify-content: center; }
+        .print-hidden { display: none; }
+        .compact-table { border-collapse: collapse; }
+        .compact-table th, .compact-table td { border-right: 1px solid #e5e7eb; }
+        .compact-table th:last-child, .compact-table td:last-child { border-right: none; }
+        @media print {
+            .no-print { display: none !important; }
+            .print-hidden { display: block !important; }
+            body { font-size: 12px; }
+        }
+    </style>
+</head>
+<body class="bg-gray-100">
+    <!-- Header -->
+    <header class="bg-blue-600 text-white p-4 shadow-lg">
+        <div class="flex items-center justify-between">
+            <div class="flex items-center space-x-4">
+                <img src="https://i.ytimg.com/vi/YXTINgYo7Io/hqdefault.jpg" alt="Logo SMPK Ov SLAMET RIYADI REMBANG" class="w-12 h-12 rounded-full object-cover">
+                <div>
+                    <h1 class="text-xl font-bold">Koperasi Simpan Pinjam</h1>
+                    <p class="text-sm opacity-90">SMPK Ov SLAMET RIYADI REMBANG</p>
+                </div>
+            </div>
+            <div class="flex items-center space-x-6">
+                <div class="text-right text-sm">
+                    <p>Jln. Dr Wahidin No 9 Rembang, Sumberjo</p>
+                    <p>Kec. Rembang, Kab. Rembang, Jawa Tengah</p>
+                    <p>Email: smpovslametriyadi@gmail.com</p>
+                </div>
+                <div class="text-right text-sm border-l border-blue-400 pl-4">
+                    <div class="flex items-center space-x-2 mb-1">
+                        <span class="w-2 h-2 bg-green-400 rounded-full animate-pulse"></span>
+                        <span>Status: <strong>Aktif</strong></span>
+                    </div>
+                    <div class="text-xs opacity-90">
+                        <div>Versi: v2.1.1</div>
+                        <div id="current-datetime">Loading...</div>
+                    </div>
+                </div>
+                <div class="flex items-center space-x-2 bg-blue-500 px-3 py-2 rounded-lg">
+                    <div class="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
+                    <span class="text-xs font-medium">Auto-save</span>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <div class="flex">
+        <!-- Sidebar -->
+        <nav class="w-64 bg-white shadow-lg h-screen sticky top-0">
+            <div class="p-4">
+                <ul class="space-y-2">
+                    <li><button onclick="showPage('dashboard')" class="w-full text-left p-3 rounded hover:bg-blue-50 sidebar-btn" id="btn-dashboard">📊 Dashboard</button></li>
+                    <li><button onclick="showPage('anggota')" class="w-full text-left p-3 rounded hover:bg-blue-50 sidebar-btn" id="btn-anggota">👥 Data Anggota</button></li>
+                    <li><button onclick="showPage('simpanan')" class="w-full text-left p-3 rounded hover:bg-blue-50 sidebar-btn" id="btn-simpanan">💰 Simpanan</button></li>
+                    <li><button onclick="showPage('pinjaman')" class="w-full text-left p-3 rounded hover:bg-blue-50 sidebar-btn" id="btn-pinjaman">🏦 Pinjaman</button></li>
+                    <li><button onclick="showPage('shu')" class="w-full text-left p-3 rounded hover:bg-blue-50 sidebar-btn" id="btn-shu">📈 SHU</button></li>
+                    <li><button onclick="showPage('laporan')" class="w-full text-left p-3 rounded hover:bg-blue-50 sidebar-btn" id="btn-laporan">📋 Laporan</button></li>
+                    <li><button onclick="showPage('pengaturan')" class="w-full text-left p-3 rounded hover:bg-blue-50 sidebar-btn" id="btn-pengaturan">⚙️ Pengaturan</button></li>
+                </ul>
+            </div>
+        </nav>
+
+        <!-- Main Content -->
+        <main class="flex-1 p-6">
+            <!-- Dashboard Page -->
+            <div id="page-dashboard" class="page fade-in">
+                <div class="flex justify-between items-center mb-6">
+                    <h2 class="text-2xl font-bold">Dashboard</h2>
+                </div>
+
+                <!-- Dashboard Infographic -->
+                <div class="bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-200 p-6 mb-6 rounded-xl shadow-sm">
+                    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                        <!-- Simpanan Overview -->
+                        <div>
+                            <div class="flex items-center mb-4">
+                                <div class="w-12 h-12 bg-green-500 rounded-full flex items-center justify-center mr-3">
+                                    <span class="text-white text-xl">💰</span>
+                                </div>
+                                <div>
+                                    <h3 class="text-lg font-bold text-green-800">Simpanan Anggota</h3>
+                                    <p class="text-sm text-green-600">Total & Pendapatan Bunga</p>
+                                </div>
+                            </div>
+                            <div class="bg-white p-4 rounded-lg border border-green-100">
+                                <div class="space-y-2 text-sm">
+                                    <div class="flex items-center justify-between">
+                                        <span class="text-gray-600">Total Anggota:</span>
+                                        <span class="font-semibold text-blue-700" id="infographic-anggota">0</span>
+                                    </div>
+                                    <div class="flex items-center justify-between">
+                                        <span class="text-gray-600">Total Simpanan:</span>
+                                        <span class="font-semibold text-green-700" id="infographic-simpanan">Rp 0</span>
+                                    </div>
+                                    <div class="flex items-center justify-between">
+                                        <span class="text-gray-600">Pendapatan Bunga:</span>
+                                        <span class="font-semibold text-emerald-700" id="infographic-pendapatan-bunga">Rp 0</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Pinjaman Overview -->
+                        <div>
+                            <div class="flex items-center mb-4">
+                                <div class="w-12 h-12 bg-orange-500 rounded-full flex items-center justify-center mr-3">
+                                    <span class="text-white text-xl">🏦</span>
+                                </div>
+                                <div>
+                                    <h3 class="text-lg font-bold text-orange-800">Pinjaman Anggota</h3>
+                                    <p class="text-sm text-orange-600">Rincian & Status</p>
+                                </div>
+                            </div>
+                            <div class="bg-white p-4 rounded-lg border border-orange-100">
+                                <div class="space-y-2 text-sm">
+                                    <div class="flex items-center justify-between">
+                                        <span class="text-gray-600">Pinjaman Regular:</span>
+                                        <span class="font-semibold text-blue-700" id="infographic-pinjaman-regular">Rp 0</span>
+                                    </div>
+                                    <div class="flex items-center justify-between">
+                                        <span class="text-gray-600">Pinjaman Pending:</span>
+                                        <span class="font-semibold text-orange-700" id="infographic-pinjaman-pending">Rp 0</span>
+                                    </div>
+                                    <div class="flex items-center justify-between">
+                                        <span class="text-gray-600">Pelunasan:</span>
+                                        <span class="font-semibold text-green-700" id="infographic-pelunasan">Rp 0</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Saldo Kas & SHU -->
+                        <div>
+                            <div class="flex items-center mb-4">
+                                <div class="w-12 h-12 bg-purple-500 rounded-full flex items-center justify-center mr-3">
+                                    <span class="text-white text-xl">💳</span>
+                                </div>
+                                <div>
+                                    <h3 class="text-lg font-bold text-purple-800">Saldo Kas & SHU</h3>
+                                    <p class="text-sm text-purple-600">Posisi Keuangan</p>
+                                </div>
+                            </div>
+                            <div class="bg-white p-4 rounded-lg border border-purple-100">
+                                <div class="space-y-2 text-sm">
+                                    <div class="flex items-center justify-between">
+                                        <span class="text-gray-600">Saldo Kas:</span>
+                                        <span class="font-semibold text-indigo-700" id="infographic-saldo-kas">Rp 0</span>
+                                    </div>
+                                    <div class="flex items-center justify-between">
+                                        <span class="text-gray-600">SHU Tahun Ini:</span>
+                                        <span class="font-semibold text-purple-700" id="infographic-shu">Rp 0</span>
+                                    </div>
+                                    <div class="flex items-center justify-between">
+                                        <span class="text-gray-600">Status SHU:</span>
+                                        <span class="font-semibold text-gray-700" id="infographic-status-shu">Belum Distribusi</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Stats Cards -->
+                <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+                    <div class="bg-white p-6 rounded-lg shadow">
+                        <div class="flex items-center">
+                            <div class="p-3 bg-blue-100 rounded-full">
+                                <span class="text-2xl">👥</span>
+                            </div>
+                            <div class="ml-4">
+                                <p class="text-gray-600">Total Anggota</p>
+                                <p class="text-2xl font-bold" id="total-anggota">0</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="bg-white p-6 rounded-lg shadow">
+                        <div class="flex items-center">
+                            <div class="p-3 bg-green-100 rounded-full">
+                                <span class="text-2xl">💰</span>
+                            </div>
+                            <div class="ml-4">
+                                <p class="text-gray-600">Total Simpanan</p>
+                                <p class="text-2xl font-bold" id="total-simpanan">Rp 0</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="bg-white p-6 rounded-lg shadow">
+                        <div class="flex items-center">
+                            <div class="p-3 bg-yellow-100 rounded-full">
+                                <span class="text-2xl">🏦</span>
+                            </div>
+                            <div class="ml-4">
+                                <p class="text-gray-600">Total Pinjaman</p>
+                                <p class="text-2xl font-bold" id="total-pinjaman">Rp 0</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="bg-white p-6 rounded-lg shadow">
+                        <div class="flex items-center">
+                            <div class="p-3 bg-purple-100 rounded-full">
+                                <span class="text-2xl">📈</span>
+                            </div>
+                            <div class="ml-4">
+                                <p class="text-gray-600">SHU Tahun Ini</p>
+                                <p class="text-2xl font-bold" id="total-shu">Rp 0</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Charts -->
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+                    <div class="bg-white p-6 rounded-lg shadow">
+                        <h3 class="text-lg font-semibold mb-4">Grafik Simpanan vs Pinjaman</h3>
+                        <canvas id="chartSimpananPinjaman"></canvas>
+                    </div>
+                    <div class="bg-white p-6 rounded-lg shadow">
+                        <h3 class="text-lg font-semibold mb-4">Distribusi Jenis Simpanan</h3>
+                        <canvas id="chartJenisSimpanan"></canvas>
+                    </div>
+                </div>
+
+                <!-- Recent Transactions -->
+                <div class="bg-white rounded-lg shadow">
+                    <div class="p-6 border-b">
+                        <h3 class="text-lg font-semibold">Transaksi Terbaru</h3>
+                    </div>
+                    <div class="p-6">
+                        <div class="overflow-x-auto">
+                            <table class="w-full">
+                                <thead>
+                                    <tr class="border-b">
+                                        <th class="text-left py-2">Tanggal</th>
+                                        <th class="text-left py-2">Anggota</th>
+                                        <th class="text-left py-2">Jenis</th>
+                                        <th class="text-left py-2">Jumlah</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="recent-transactions">
+                                    <tr>
+                                        <td colspan="4" class="text-center py-4 text-gray-500">Belum ada transaksi</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Anggota Page -->
+            <div id="page-anggota" class="page hidden">
+                <div class="flex justify-between items-center mb-6">
+                    <h2 class="text-2xl font-bold">Data Anggota</h2>
+                    <div class="space-x-2">
+                        <button onclick="showModal('modal-bulk-import')" class="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700">📤 Import Bulk</button>
+                        <button onclick="showModal('modal-anggota')" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">➕ Tambah Anggota</button>
+                    </div>
+                </div>
+
+                <div class="bg-white rounded-lg shadow">
+                    <div class="p-6">
+                        <div class="mb-4">
+                            <input type="text" id="search-anggota" placeholder="Cari anggota..." class="w-full p-3 border rounded-lg">
+                        </div>
+                        <div class="overflow-x-auto">
+                            <table class="w-full">
+                                <thead>
+                                    <tr class="border-b">
+                                        <th class="text-left py-3">No. Anggota</th>
+                                        <th class="text-left py-3">Nama</th>
+                                        <th class="text-left py-3">Telepon</th>
+                                        <th class="text-left py-3">Bergabung</th>
+                                        <th class="text-left py-3">Aksi</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="table-anggota">
+                                    <tr>
+                                        <td colspan="5" class="text-center py-4 text-gray-500">Belum ada anggota</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Simpanan Page -->
+            <div id="page-simpanan" class="page hidden">
+                <div class="flex justify-between items-center mb-6">
+                    <h2 class="text-2xl font-bold">Transaksi Simpanan</h2>
+                    <button onclick="showModal('modal-simpanan')" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">➕ Tambah Simpanan</button>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
+                    <div class="bg-white p-6 rounded-lg shadow">
+                        <h3 class="font-semibold text-gray-700">Simpanan Pokok</h3>
+                        <p class="text-2xl font-bold text-blue-600" id="simpanan-pokok">Rp 0</p>
+                    </div>
+                    <div class="bg-white p-6 rounded-lg shadow">
+                        <h3 class="font-semibold text-gray-700">Simpanan Wajib</h3>
+                        <p class="text-2xl font-bold text-green-600" id="simpanan-wajib">Rp 0</p>
+                    </div>
+                    <div class="bg-white p-6 rounded-lg shadow">
+                        <h3 class="font-semibold text-gray-700">Simpanan Sukarela</h3>
+                        <p class="text-2xl font-bold text-purple-600" id="simpanan-sukarela">Rp 0</p>
+                    </div>
+                </div>
+
+                <div class="bg-white rounded-lg shadow">
+                    <div class="p-6">
+                        <div class="mb-4 flex space-x-4">
+                            <select id="filter-jenis-simpanan" class="p-2 border rounded">
+                                <option value="">Semua Jenis</option>
+                                <option value="pokok">Simpanan Pokok</option>
+                                <option value="wajib">Simpanan Wajib</option>
+                                <option value="sukarela">Simpanan Sukarela</option>
+                            </select>
+                            <input type="date" id="filter-tanggal-simpanan" class="p-2 border rounded">
+                        </div>
+                        <div class="overflow-x-auto">
+                            <table class="w-full">
+                                <thead>
+                                    <tr class="border-b">
+                                        <th class="text-left py-3">Tanggal</th>
+                                        <th class="text-left py-3">Anggota</th>
+                                        <th class="text-left py-3">Jenis</th>
+                                        <th class="text-left py-3">Jumlah</th>
+                                        <th class="text-left py-3">Keterangan</th>
+                                        <th class="text-left py-3">Aksi</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="table-simpanan">
+                                    <tr>
+                                        <td colspan="6" class="text-center py-4 text-gray-500">Belum ada transaksi simpanan</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Pinjaman Page -->
+            <div id="page-pinjaman" class="page hidden">
+                <div class="flex justify-between items-center mb-6">
+                    <h2 class="text-2xl font-bold">Detail Pinjaman</h2>
+                    <button onclick="showModal('modal-pinjaman')" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">➕ Tambah Pinjaman</button>
+                </div>
+
+                <!-- Simple Rollover Guide -->
+                <div class="bg-orange-50 border-l-4 border-orange-400 p-4 mb-6">
+                    <div class="flex">
+                        <div class="flex-shrink-0">
+                            <span class="text-2xl">🔄</span>
+                        </div>
+                        <div class="ml-3">
+                            <h3 class="text-sm font-medium text-orange-800">Pinjaman Guling (Rollover)</h3>
+                            <div class="mt-2 text-sm text-orange-700">
+                                <p><strong>Cara kerja:</strong> Anggota bisa menambah jumlah pinjaman di tengah periode. Angsuran akan dihitung ulang berdasarkan total pinjaman baru dan sisa waktu.</p>
+                                <p class="mt-1"><strong>Contoh:</strong> Pinjaman Rp 1.000.000 → Rollover +Rp 500.000 → Total jadi Rp 1.500.000 dengan angsuran baru.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
+                    <div class="bg-white p-6 rounded-lg shadow">
+                        <h3 class="font-semibold text-gray-700">Pinjaman Aktif</h3>
+                        <p class="text-2xl font-bold text-orange-600" id="pinjaman-aktif">Rp 0</p>
+                    </div>
+                    <div class="bg-white p-6 rounded-lg shadow">
+                        <h3 class="font-semibold text-gray-700">Pinjaman Lunas</h3>
+                        <p class="text-2xl font-bold text-green-600" id="pinjaman-lunas">Rp 0</p>
+                    </div>
+                    <div class="bg-white p-6 rounded-lg shadow">
+                        <h3 class="font-semibold text-gray-700">Total Bunga</h3>
+                        <p class="text-2xl font-bold text-red-600" id="total-bunga">Rp 0</p>
+                    </div>
+                </div>
+
+                <div class="bg-white rounded-lg shadow">
+                    <div class="p-6">
+                        <div class="mb-4 flex space-x-4">
+                            <select id="filter-status-pinjaman" class="p-2 border rounded">
+                                <option value="">Semua Status</option>
+                                <option value="aktif">Aktif</option>
+                                <option value="lunas">Lunas</option>
+                                <option value="pending">Pending</option>
+                            </select>
+                            <select id="filter-jenis-pinjaman" class="p-2 border rounded">
+                                <option value="">Semua Jenis</option>
+                                <option value="regular">Regular</option>
+                                <option value="pending">Pending</option>
+                                <option value="guling">Guling</option>
+                            </select>
+                        </div>
+                        <div class="overflow-x-auto">
+                            <table class="w-full text-xs compact-table">
+                                <thead>
+                                    <tr class="border-b bg-gray-50">
+                                        <th class="text-left py-1 px-1 border-r">No</th>
+                                        <th class="text-left py-1 px-1 border-r">Kode</th>
+                                        <th class="text-left py-1 px-1 border-r">Nama</th>
+                                        <th class="text-left py-1 px-1 border-r">Jenis</th>
+                                        <th class="text-left py-1 px-1 border-r">Tgl Cair</th>
+                                        <th class="text-left py-1 px-1 border-r">Nilai Pinjaman</th>
+                                        <th class="text-left py-1 px-1 border-r">Tenor</th>
+                                        <th class="text-left py-1 px-1 border-r">Pokok/Bln</th>
+                                        <th class="text-left py-1 px-1 border-r">Bunga%</th>
+                                        <th class="text-left py-1 px-1 border-r">Total/Bln</th>
+                                        <th class="text-left py-1 px-1 border-r">Tgl Akhir</th>
+                                        <th class="text-left py-1 px-1 border-r">Ke-</th>
+                                        <th class="text-left py-1 px-1 border-r">Sisa</th>
+                                        <th class="text-left py-1 px-1 border-r">Terbayar</th>
+                                        <th class="text-left py-1 px-1 border-r">Bunga</th>
+                                        <th class="text-left py-1 px-1 border-r">Bunga s/d Akhir</th>
+                                        <th class="text-left py-1 px-1 border-r">Roll</th>
+                                        <th class="text-left py-1 px-1 border-r">Status</th>
+                                        <th class="text-left py-1 px-1">Aksi</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="table-pinjaman">
+                                    <tr>
+                                        <td colspan="19" class="text-center py-4 text-gray-500">Belum ada pinjaman</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SHU Page -->
+            <div id="page-shu" class="page hidden">
+                <div class="flex justify-between items-center mb-6">
+                    <h2 class="text-2xl font-bold">Sisa Hasil Usaha (SHU)</h2>
+                    <button onclick="showModal('modal-shu')" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">➕ Hitung SHU</button>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                    <div class="bg-white p-6 rounded-lg shadow">
+                        <h3 class="font-semibold text-gray-700 mb-4">Total SHU Tahun Ini</h3>
+                        <p class="text-3xl font-bold text-green-600" id="shu-tahun-ini">Rp 0</p>
+                        <p class="text-sm text-gray-500 mt-2">Periode: <span id="periode-shu">2025</span></p>
+                    </div>
+                    <div class="bg-white p-6 rounded-lg shadow">
+                        <h3 class="font-semibold text-gray-700 mb-4">Status Distribusi</h3>
+                        <p class="text-lg" id="status-distribusi">Belum didistribusikan</p>
+                        <button onclick="distributeAllSHU()" class="mt-2 bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700">Distribusikan SHU</button>
+                    </div>
+                </div>
+
+                <div class="bg-white rounded-lg shadow mb-6">
+                    <div class="p-6 border-b">
+                        <h3 class="text-lg font-semibold">📊 Komponen Distribusi SHU</h3>
+                        <p class="text-sm text-gray-600 mt-2">Tabel ini menunjukkan bagaimana Sisa Hasil Usaha (SHU) akan dibagikan atau dialokasikan ke berbagai komponen untuk transparansi dan keadilan dalam pembagian keuntungan.</p>
+                    </div>
+                    <div class="p-6">
+                        <!-- SHU Components Table -->
+                        <div class="overflow-x-auto mb-4">
+                            <table class="w-full border-collapse border border-gray-300">
+                                <thead>
+                                    <tr class="bg-blue-50">
+                                        <th class="border border-gray-300 px-3 py-2 text-left font-semibold">NO</th>
+                                        <th class="border border-gray-300 px-3 py-2 text-left font-semibold">KOMPONEN</th>
+                                        <th class="border border-gray-300 px-3 py-2 text-center font-semibold">PERSENTASE (%)</th>
+                                        <th class="border border-gray-300 px-3 py-2 text-right font-semibold">NILAI (Rp)</th>
+                                        <th class="border border-gray-300 px-3 py-2 text-center font-semibold">AKSI</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="shu-components-table">
+                                    <!-- Components will be loaded here -->
+                                </tbody>
+                                <tfoot>
+                                    <tr class="bg-gray-100 font-bold">
+                                        <td class="border border-gray-300 px-3 py-2" colspan="2">TOTAL</td>
+                                        <td class="border border-gray-300 px-3 py-2 text-center" id="total-persentase">0.0%</td>
+                                        <td class="border border-gray-300 px-3 py-2 text-right" id="total-nilai">Rp 0</td>
+                                        <td class="border border-gray-300 px-3 py-2 text-center">
+                                            <span id="status-persentase" class="px-2 py-1 rounded text-sm font-semibold">
+                                                ❌ 0%
+                                            </span>
+                                        </td>
+                                    </tr>
+                                </tfoot>
+                            </table>
+                        </div>
+                        
+                        <!-- Control Buttons -->
+                        <div class="flex flex-wrap gap-2 justify-between items-center">
+                            <div class="flex gap-2">
+                                <button onclick="addSHUComponent()" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">➕ Tambah Baris</button>
+                                <button onclick="resetSHUDefault()" class="bg-gray-600 text-white px-4 py-2 rounded hover:bg-gray-700">🔄 Reset Default</button>
+                            </div>
+                            <div class="flex gap-2">
+                                <button onclick="validateAndDistributeSHU()" class="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700 font-semibold">💰 Distribusi SHU</button>
+                            </div>
+                        </div>
+                        
+                        <!-- Information Box -->
+                        <div class="mt-4 bg-blue-50 border-l-4 border-blue-400 p-4">
+                            <h4 class="font-semibold text-blue-800 mb-2">📋 Penjelasan Komponen:</h4>
+                            <div class="text-sm text-blue-700 space-y-1">
+                                <p><strong>• Konsumsi:</strong> Bagian dari SHU yang dialokasikan untuk kebutuhan operasional atau konsumsi internal</p>
+                                <p><strong>• Jasa Anggota atas Simpanan:</strong> Bagian SHU yang dibagikan kepada anggota berdasarkan besarnya simpanan yang mereka miliki di koperasi</p>
+                                <p><strong>• Jasa Anggota atas Transaksi:</strong> Bagian SHU yang dibagikan kepada anggota berdasarkan aktivitas transaksi yang mereka lakukan dengan koperasi (misalnya, pinjaman, pembelian)</p>
+                                <p><strong>• Jasa Pengurus:</strong> Alokasi SHU untuk memberikan penghargaan atau honorarium kepada pengurus koperasi atas kinerja mereka</p>
+                                <p><strong>• Dana Piknik:</strong> Sebagian kecil SHU yang dialokasikan khusus untuk kegiatan rekreasi atau piknik</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Distribusi SHU Per Anggota -->
+                <div class="bg-white rounded-lg shadow mb-6">
+                    <div class="p-6 border-b">
+                        <h3 class="text-lg font-semibold">📊 Distribusi SHU Per Anggota</h3>
+                        <p class="text-sm text-gray-600 mt-2">Formula perhitungan SHU berdasarkan partisipasi modal dan transaksi</p>
+                    </div>
+                    <div class="p-6">
+                        <!-- Formula Explanation -->
+                        <div class="bg-blue-50 border-l-4 border-blue-400 p-4 mb-6">
+                            <h4 class="font-semibold text-blue-800 mb-3">📋 Formula Distribusi SHU</h4>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
+                                <div class="bg-white p-3 rounded">
+                                    <h5 class="font-semibold text-green-700 mb-2">🏦 SHU Atas Modal:</h5>
+                                    <p class="text-xs text-gray-700">= (SP + SR Anggota ÷ Total SP + SR Semua) × Jasa Modal</p>
+                                    <p class="text-xs text-gray-500 mt-1">SP = Simpanan Pokok, SR = Simpanan Wajib</p>
+                                </div>
+                                <div class="bg-white p-3 rounded">
+                                    <h5 class="font-semibold text-purple-700 mb-2">💼 SHU Atas Transaksi:</h5>
+                                    <p class="text-xs text-gray-700">= (Pinjaman Anggota ÷ Total Pinjaman Semua) × Jasa Transaksi</p>
+                                    <p class="text-xs text-gray-500 mt-1">Berdasarkan total nilai pinjaman yang pernah diambil</p>
+                                </div>
+                            </div>
+                            <div class="mt-3 p-2 bg-yellow-100 rounded">
+                                <p class="text-sm font-semibold text-yellow-800">💰 Total SHU Anggota = SHU Atas Modal + SHU Atas Transaksi</p>
+                            </div>
+                        </div>
+
+
+
+                        <div class="flex justify-between items-center mb-4">
+                            <div class="flex gap-2">
+                                <button onclick="calculateSHUDistribution()" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">🔄 Hitung Distribusi</button>
+                                <button onclick="printSHUDistribution()" class="bg-purple-600 text-white px-4 py-2 rounded hover:bg-purple-700">🖨️ Cetak Laporan</button>
+                            </div>
+                            <button onclick="exportSHUDistribution()" class="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700">📊 Export Excel</button>
+                        </div>
+
+                        <!-- SHU Distribution Summary -->
+                        <div id="shu-distribution-summary" class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6 hidden">
+                            <div class="bg-blue-50 p-4 rounded">
+                                <h4 class="font-semibold text-blue-800">Total SHU Tersedia</h4>
+                                <p class="text-xl font-bold text-blue-600" id="total-shu-tersedia">Rp 0</p>
+                            </div>
+                            <div class="bg-green-50 p-4 rounded">
+                                <h4 class="font-semibold text-green-800">Jasa Modal</h4>
+                                <p class="text-xl font-bold text-green-600" id="total-jasa-modal">Rp 0</p>
+                            </div>
+                            <div class="bg-purple-50 p-4 rounded">
+                                <h4 class="font-semibold text-purple-800">Jasa Transaksi</h4>
+                                <p class="text-xl font-bold text-purple-600" id="total-jasa-transaksi">Rp 0</p>
+                            </div>
+                            <div class="bg-orange-50 p-4 rounded">
+                                <h4 class="font-semibold text-orange-800">Total Dibagikan</h4>
+                                <p class="text-xl font-bold text-orange-600" id="total-shu-dibagikan">Rp 0</p>
+                            </div>
+                        </div>
+
+                        <!-- SHU Distribution Table -->
+                        <div class="overflow-x-auto">
+                            <table class="w-full text-xs border-collapse border border-gray-400" id="table-shu-distribution">
+                                <thead>
+                                    <tr class="bg-blue-100">
+                                        <th rowspan="2" class="border border-gray-400 px-2 py-3 text-center font-bold">NO</th>
+                                        <th rowspan="2" class="border border-gray-400 px-2 py-3 text-center font-bold">ID ANGGOTA</th>
+                                        <th rowspan="2" class="border border-gray-400 px-2 py-3 text-center font-bold">NAMA ANGGOTA</th>
+                                        <th colspan="2" class="border border-gray-400 px-2 py-2 text-center font-bold bg-green-50">DISTRIBUSI ANGGOTA</th>
+                                        <th colspan="2" class="border border-gray-400 px-2 py-2 text-center font-bold bg-yellow-50">SHU ANGGOTA</th>
+                                        <th rowspan="2" class="border border-gray-400 px-2 py-3 text-center font-bold bg-blue-50">JUMLAH SHU</th>
+                                        <th rowspan="2" class="border border-gray-400 px-2 py-3 text-center font-bold bg-purple-50">SHU DIBAGIKAN</th>
+                                        <th rowspan="2" class="border border-gray-400 px-2 py-3 text-center font-bold">TANDA TANGAN</th>
+                                    </tr>
+                                    <tr class="bg-blue-50">
+                                        <th class="border border-gray-400 px-2 py-2 text-center font-semibold bg-green-50">MODAL<br>(SP+SR)</th>
+                                        <th class="border border-gray-400 px-2 py-2 text-center font-semibold bg-green-50">TRANSAKSI</th>
+                                        <th class="border border-gray-400 px-2 py-2 text-center font-semibold bg-yellow-50">ATAS MODAL</th>
+                                        <th class="border border-gray-400 px-2 py-2 text-center font-semibold bg-yellow-50">ATAS TRANSAKSI</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="shu-distribution-body">
+                                    <tr>
+                                        <td colspan="10" class="text-center py-4 text-gray-500 border border-gray-400">Klik "Hitung Distribusi" untuk melihat pembagian SHU</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-white rounded-lg shadow">
+                    <div class="p-6 border-b">
+                        <h3 class="text-lg font-semibold">Riwayat SHU</h3>
+                    </div>
+                    <div class="p-6">
+                        <div class="overflow-x-auto">
+                            <table class="w-full">
+                                <thead>
+                                    <tr class="border-b">
+                                        <th class="text-left py-3">Tahun</th>
+                                        <th class="text-left py-3">Total SHU</th>
+                                        <th class="text-left py-3">Didistribusikan</th>
+                                        <th class="text-left py-3">Status</th>
+                                        <th class="text-left py-3">Aksi</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="table-shu">
+                                    <tr>
+                                        <td colspan="5" class="text-center py-4 text-gray-500">Belum ada data SHU</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Laporan Page -->
+            <div id="page-laporan" class="page hidden">
+                <h2 class="text-2xl font-bold mb-6">Laporan Keuangan</h2>
+
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
+                    <div class="bg-white p-6 rounded-lg shadow">
+                        <h3 class="font-semibold text-gray-700 mb-4">Filter Laporan</h3>
+                        <div class="space-y-3">
+                            <div>
+                                <label class="block text-sm font-medium mb-1">Periode</label>
+                                <select id="periode-laporan" class="w-full p-2 border rounded">
+                                    <option value="bulan">Bulanan</option>
+                                    <option value="tahun">Tahunan</option>
+                                    <option value="custom">Custom</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium mb-1">Dari Tanggal</label>
+                                <input type="date" id="dari-tanggal" class="w-full p-2 border rounded">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium mb-1">Sampai Tanggal</label>
+                                <input type="date" id="sampai-tanggal" class="w-full p-2 border rounded">
+                            </div>
+                            <button onclick="generateReport()" class="w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700">Generate Laporan</button>
+                        </div>
+                    </div>
+
+                    <div class="bg-white p-6 rounded-lg shadow">
+                        <h3 class="font-semibold text-gray-700 mb-4">Export Data</h3>
+                        <div class="space-y-2">
+                            <button onclick="exportCSV('anggota')" class="w-full bg-green-600 text-white py-2 rounded hover:bg-green-700">📊 Export Anggota</button>
+                            <button onclick="exportCSV('simpanan')" class="w-full bg-green-600 text-white py-2 rounded hover:bg-green-700">📊 Export Simpanan</button>
+                            <button onclick="exportCSV('pinjaman')" class="w-full bg-green-600 text-white py-2 rounded hover:bg-green-700">📊 Export Pinjaman</button>
+                            <button onclick="exportCSV('shu')" class="w-full bg-green-600 text-white py-2 rounded hover:bg-green-700">📊 Export SHU</button>
+                        </div>
+                    </div>
+
+                    <div class="bg-white p-6 rounded-lg shadow">
+                        <h3 class="font-semibold text-gray-700 mb-4">Cetak Laporan</h3>
+                        <div class="space-y-2">
+                            <button onclick="printReport('neraca')" class="w-full bg-purple-600 text-white py-2 rounded hover:bg-purple-700">🖨️ Neraca</button>
+                            <button onclick="printReport('laba-rugi')" class="w-full bg-purple-600 text-white py-2 rounded hover:bg-purple-700">🖨️ Laba Rugi</button>
+                            <button onclick="printReport('kas')" class="w-full bg-purple-600 text-white py-2 rounded hover:bg-purple-700">🖨️ Arus Kas</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-white rounded-lg shadow">
+                    <div class="p-6 border-b">
+                        <h3 class="text-lg font-semibold">Ringkasan Laporan</h3>
+                    </div>
+                    <div class="p-6" id="laporan-content">
+                        <p class="text-gray-500 text-center py-8">Silakan generate laporan untuk melihat data</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Pengaturan Page -->
+            <div id="page-pengaturan" class="page hidden">
+                <h2 class="text-2xl font-bold mb-6">Pengaturan Sistem</h2>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div class="bg-white p-6 rounded-lg shadow">
+                        <h3 class="text-lg font-semibold mb-4">Pengaturan Bunga Pinjaman</h3>
+                        <div class="space-y-4">
+                            <div>
+                                <label class="block text-sm font-medium mb-1">Bunga Pinjaman Regular (%)</label>
+                                <input type="number" id="bunga-regular" step="0.1" class="w-full p-2 border rounded" value="2">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium mb-1">Bunga Pinjaman Pending (%)</label>
+                                <input type="number" id="bunga-pending" step="0.1" class="w-full p-2 border rounded" value="1.5">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium mb-1">Bunga Pinjaman Guling (%)</label>
+                                <input type="number" id="bunga-guling" step="0.1" class="w-full p-2 border rounded" value="3">
+                            </div>
+                            <button onclick="saveInterestSettings()" class="w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700">Simpan Pengaturan</button>
+                        </div>
+                    </div>
+
+                    <div class="bg-white p-6 rounded-lg shadow">
+                        <h3 class="text-lg font-semibold mb-4">Pengaturan Umum</h3>
+                        <div class="space-y-4">
+                            <div>
+                                <label class="block text-sm font-medium mb-1">Nama Koperasi</label>
+                                <input type="text" id="nama-koperasi" class="w-full p-2 border rounded" value="Koperasi SMPK Ov SLAMET RIYADI REMBANG">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium mb-1">Tahun Buku</label>
+                                <input type="number" id="tahun-buku" class="w-full p-2 border rounded" value="2025">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium mb-1">Simpanan Pokok Minimum</label>
+                                <input type="text" id="simpanan-pokok-min" class="w-full p-2 border rounded" value="100.000" oninput="formatNumberInput(this)">
+                            </div>
+                            <button onclick="saveGeneralSettings()" class="w-full bg-green-600 text-white py-2 rounded hover:bg-green-700">Simpan Pengaturan</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-white p-6 rounded-lg shadow mt-6">
+                    <h3 class="text-lg font-semibold mb-4">Backup & Restore Data</h3>
+                    <div class="flex space-x-4">
+                        <button onclick="backupData()" class="bg-yellow-600 text-white px-4 py-2 rounded hover:bg-yellow-700">💾 Backup Data</button>
+                        <button onclick="document.getElementById('restore-file').click()" class="bg-orange-600 text-white px-4 py-2 rounded hover:bg-orange-700">📁 Restore Data</button>
+                        <input type="file" id="restore-file" accept=".json" style="display: none;" onchange="restoreData(this)">
+                        <button onclick="clearAllData()" class="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700">🗑️ Hapus Semua Data</button>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Modals -->
+    <!-- Modal Anggota -->
+    <div id="modal-anggota" class="modal">
+        <div class="bg-white p-6 rounded-lg w-96">
+            <h3 class="text-lg font-semibold mb-4">Tambah Anggota Baru</h3>
+            <form id="form-anggota">
+                <div class="space-y-4">
+                    <div>
+                        <label class="block text-sm font-medium mb-1">Nama Lengkap</label>
+                        <input type="text" name="nama" required class="w-full p-2 border rounded">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium mb-1">No. Telepon</label>
+                        <input type="tel" name="telepon" class="w-full p-2 border rounded">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium mb-1">Alamat</label>
+                        <textarea name="alamat" class="w-full p-2 border rounded" rows="3"></textarea>
+                    </div>
+                </div>
+                <div class="flex justify-end space-x-2 mt-6">
+                    <button type="button" onclick="hideModal('modal-anggota')" class="px-4 py-2 text-gray-600 border rounded hover:bg-gray-50">Batal</button>
+                    <button type="submit" class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700">Simpan</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal Bulk Import -->
+    <div id="modal-bulk-import" class="modal">
+        <div class="bg-white p-6 rounded-lg w-96">
+            <h3 class="text-lg font-semibold mb-4">Import Bulk Anggota</h3>
+            <div class="space-y-4">
+                <div>
+                    <label class="block text-sm font-medium mb-1">Format CSV</label>
+                    <p class="text-xs text-gray-600 mb-2">Format: nama,telepon,alamat</p>
+                    <textarea id="bulk-data" class="w-full p-2 border rounded h-32" placeholder="Contoh:
+John Doe,081234567890,Jl. Merdeka No 1
+Jane Smith,081234567891,Jl. Sudirman No 2"></textarea>
+                </div>
+                <div>
+                    <input type="file" id="csv-file" accept=".csv" class="w-full p-2 border rounded">
+                </div>
+            </div>
+            <div class="flex justify-end space-x-2 mt-6">
+                <button type="button" onclick="hideModal('modal-bulk-import')" class="px-4 py-2 text-gray-600 border rounded hover:bg-gray-50">Batal</button>
+                <button type="button" onclick="processBulkImport()" class="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700">Import</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Simpanan -->
+    <div id="modal-simpanan" class="modal">
+        <div class="bg-white p-6 rounded-lg w-96">
+            <h3 class="text-lg font-semibold mb-4">Tambah Transaksi Simpanan</h3>
+            <form id="form-simpanan">
+                <div class="space-y-4">
+                    <div>
+                        <label class="block text-sm font-medium mb-1">Anggota</label>
+                        <select name="anggota_id" required class="w-full p-2 border rounded" id="select-anggota-simpanan">
+                            <option value="">Pilih Anggota</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium mb-1">Jenis Simpanan</label>
+                        <select name="jenis" required class="w-full p-2 border rounded">
+                            <option value="">Pilih Jenis</option>
+                            <option value="pokok">Simpanan Pokok</option>
+                            <option value="wajib">Simpanan Wajib</option>
+                            <option value="sukarela">Simpanan Sukarela</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium mb-1">Jumlah (Rp)</label>
+                        <input type="text" name="jumlah" required class="w-full p-2 border rounded" placeholder="0" oninput="formatNumberInput(this)">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium mb-1">Keterangan</label>
+                        <textarea name="keterangan" class="w-full p-2 border rounded" rows="2"></textarea>
+                    </div>
+                </div>
+                <div class="flex justify-end space-x-2 mt-6">
+                    <button type="button" onclick="hideModal('modal-simpanan')" class="px-4 py-2 text-gray-600 border rounded hover:bg-gray-50">Batal</button>
+                    <button type="submit" class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700">Simpan</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal Pinjaman -->
+    <div id="modal-pinjaman" class="modal">
+        <div class="bg-white p-6 rounded-lg w-96">
+            <h3 class="text-lg font-semibold mb-4">Tambah Pinjaman</h3>
+            <form id="form-pinjaman">
+                <div class="space-y-4">
+                    <div>
+                        <label class="block text-sm font-medium mb-1">Anggota</label>
+                        <select name="anggota_id" required class="w-full p-2 border rounded" id="select-anggota-pinjaman">
+                            <option value="">Pilih Anggota</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium mb-1">Jenis Pinjaman</label>
+                        <select name="jenis" required class="w-full p-2 border rounded" onchange="updateBungaPinjaman(this)">
+                            <option value="">Pilih Jenis</option>
+                            <option value="regular">Regular</option>
+                            <option value="pending">Pending</option>
+                            <option value="guling">Guling</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium mb-1">Jumlah Pinjaman (Rp)</label>
+                        <input type="text" name="jumlah" required class="w-full p-2 border rounded" placeholder="0" oninput="formatNumberInput(this)">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium mb-1">Bunga (%)</label>
+                        <input type="number" name="bunga" required class="w-full p-2 border rounded" step="0.1" min="0">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium mb-1">Tanggal Pencairan</label>
+                        <input type="date" name="tanggal_pencairan" required class="w-full p-2 border rounded">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium mb-1">Jangka Waktu (Bulan)</label>
+                        <input type="number" name="jangka_waktu" required class="w-full p-2 border rounded" min="1">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium mb-1">Keperluan</label>
+                        <textarea name="keperluan" class="w-full p-2 border rounded" rows="2"></textarea>
+                    </div>
+                </div>
+                <div class="flex justify-end space-x-2 mt-6">
+                    <button type="button" onclick="hideModal('modal-pinjaman')" class="px-4 py-2 text-gray-600 border rounded hover:bg-gray-50">Batal</button>
+                    <button type="submit" class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700">Simpan</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal SHU -->
+    <div id="modal-shu" class="modal">
+        <div class="bg-white p-6 rounded-lg w-96">
+            <h3 class="text-lg font-semibold mb-4">Hitung SHU</h3>
+            <form id="form-shu">
+                <div class="space-y-4">
+                    <div>
+                        <label class="block text-sm font-medium mb-1">Tahun</label>
+                        <input type="number" name="tahun" required class="w-full p-2 border rounded" value="2025">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium mb-1">Total Pendapatan (Rp)</label>
+                        <input type="text" name="pendapatan" required class="w-full p-2 border rounded" placeholder="0" oninput="formatNumberInput(this)">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium mb-1">Total Biaya Operasional (Rp)</label>
+                        <input type="text" name="biaya" required class="w-full p-2 border rounded" placeholder="0" oninput="formatNumberInput(this)">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium mb-1">Keterangan</label>
+                        <textarea name="keterangan" class="w-full p-2 border rounded" rows="2"></textarea>
+                    </div>
+                </div>
+                <div class="flex justify-end space-x-2 mt-6">
+                    <button type="button" onclick="hideModal('modal-shu')" class="px-4 py-2 text-gray-600 border rounded hover:bg-gray-50">Batal</button>
+                    <button type="submit" class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700">Hitung</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal Rollover - Simplified -->
+    <div id="modal-rollover" class="modal">
+        <div class="bg-white p-6 rounded-lg w-96">
+            <h3 class="text-xl font-bold mb-4 text-center">🔄 Rollover Pinjaman</h3>
+            <div id="rollover-info" class="mb-4">
+                <!-- Rollover info will be populated here -->
+            </div>
+            <form id="form-rollover">
+                <input type="hidden" name="pinjaman_id" id="rollover-pinjaman-id">
+                <div class="space-y-4">
+                    <div class="hidden">
+                        <input type="date" name="tanggal_rollover" required class="w-full p-2 border rounded">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-bold mb-2 text-green-700">💰 Berapa tambahan pinjaman?</label>
+                        <input type="text" name="tambahan_jumlah" required class="w-full p-3 border-2 border-green-300 rounded-lg text-lg font-semibold" placeholder="Contoh: 500.000" oninput="formatNumberInput(this)">
+                        <p class="text-xs text-gray-500 mt-1">Masukkan jumlah tambahan yang diinginkan</p>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium mb-1">📝 Keterangan (opsional)</label>
+                        <textarea name="keterangan_rollover" class="w-full p-2 border rounded" rows="2" placeholder="Untuk keperluan apa tambahan ini?"></textarea>
+                    </div>
+                    <div id="rollover-calculation">
+                        <!-- Calculation preview will be shown here -->
+                    </div>
+                </div>
+                <div class="flex justify-end space-x-2 mt-6">
+                    <button type="button" onclick="hideModal('modal-rollover')" class="px-6 py-2 text-gray-600 border-2 rounded-lg hover:bg-gray-50">❌ Batal</button>
+                    <button type="submit" class="px-6 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 font-semibold">✅ Proses Rollover</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // Data Storage
+        let data = {
+            anggota: [],
+            simpanan: [],
+            pinjaman: [],
+            shu: [],
+            settings: {
+                bungaRegular: 2,
+                bungaPending: 1.5,
+                bungaGuling: 3,
+                namaKoperasi: 'Koperasi SMPK Ov SLAMET RIYADI REMBANG',
+                tahunBuku: 2025,
+                simpananPokokMin: 100000
+            },
+            shuComponents: [
+                { id: 1, nama: 'Konsumsi', persentase: 40 },
+                { id: 2, nama: 'Jasa Anggota atas Simpanan', persentase: 25 },
+                { id: 3, nama: 'Jasa Anggota atas Transaksi', persentase: 25 },
+                { id: 4, nama: 'Jasa Pengurus', persentase: 10 },
+                { id: 5, nama: 'Dana Piknik', persentase: 0 }
+            ]
+        };
+
+        // Load data from localStorage
+        function loadData() {
+            const savedData = localStorage.getItem('koperasiData');
+            if (savedData) {
+                data = { ...data, ...JSON.parse(savedData) };
+            }
+            updateDashboard();
+            updateAllTables();
+            updateSelects();
+            loadSHUComponents();
+        }
+
+        // Save data to localStorage
+        function saveData() {
+            localStorage.setItem('koperasiData', JSON.stringify(data));
+        }
+
+        // Page Navigation
+        function showPage(pageId) {
+            // Hide all pages
+            document.querySelectorAll('.page').forEach(page => {
+                page.classList.add('hidden');
+            });
+            
+            // Remove active class from all buttons
+            document.querySelectorAll('.sidebar-btn').forEach(btn => {
+                btn.classList.remove('sidebar-active');
+            });
+            
+            // Show selected page
+            document.getElementById(`page-${pageId}`).classList.remove('hidden');
+            document.getElementById(`btn-${pageId}`).classList.add('sidebar-active');
+            
+            // Update page-specific data
+            if (pageId === 'dashboard') {
+                updateDashboard();
+                updateCharts();
+            } else if (pageId === 'shu') {
+                updateSHUPage();
+            }
+        }
+
+        // Modal Functions
+        function showModal(modalId) {
+            document.getElementById(modalId).classList.add('show');
+        }
+
+        function hideModal(modalId) {
+            document.getElementById(modalId).classList.remove('show');
+        }
+
+        // Anggota Functions
+        document.getElementById('form-anggota').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const formData = new FormData(e.target);
+            const anggota = {
+                id: Date.now(),
+                no_anggota: `A${String(data.anggota.length + 1).padStart(4, '0')}`,
+                nama: formData.get('nama'),
+                telepon: formData.get('telepon'),
+                alamat: formData.get('alamat'),
+                tanggal_bergabung: new Date().toISOString().split('T')[0]
+            };
+            
+            data.anggota.push(anggota);
+            saveData();
+            updateAnggotaTable();
+            updateSelects();
+            updateDashboard();
+            hideModal('modal-anggota');
+            e.target.reset();
+            
+            addTransaction('Anggota baru bergabung', anggota.nama, 'Pendaftaran', 0);
+        });
+
+        function updateAnggotaTable() {
+            const tbody = document.getElementById('table-anggota');
+            if (data.anggota.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="5" class="text-center py-4 text-gray-500">Belum ada anggota</td></tr>';
+                return;
+            }
+            
+            tbody.innerHTML = data.anggota.map(anggota => `
+                <tr>
+                    <td class="py-2">${anggota.no_anggota}</td>
+                    <td class="py-2">${anggota.nama}</td>
+                    <td class="py-2">${anggota.telepon || '-'}</td>
+                    <td class="py-2">${formatDate(anggota.tanggal_bergabung)}</td>
+                    <td class="py-2">
+                        <button onclick="editAnggota(${anggota.id})" class="text-blue-600 hover:underline mr-2">Edit</button>
+                        <button onclick="deleteAnggota(${anggota.id})" class="text-red-600 hover:underline">Hapus</button>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        function deleteAnggota(id) {
+            if (confirm('Yakin ingin menghapus anggota ini?')) {
+                data.anggota = data.anggota.filter(a => a.id !== id);
+                saveData();
+                updateAnggotaTable();
+                updateSelects();
+                updateDashboard();
+            }
+        }
+
+        // Bulk Import Functions
+        function processBulkImport() {
+            const bulkData = document.getElementById('bulk-data').value;
+            const fileInput = document.getElementById('csv-file');
+            
+            if (fileInput.files.length > 0) {
+                const file = fileInput.files[0];
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    processBulkData(e.target.result);
+                };
+                reader.readAsText(file);
+            } else if (bulkData.trim()) {
+                processBulkData(bulkData);
+            } else {
+                alert('Silakan masukkan data atau pilih file CSV');
+            }
+        }
+
+        function processBulkData(csvData) {
+            const lines = csvData.trim().split('\n');
+            let imported = 0;
+            
+            lines.forEach(line => {
+                const [nama, telepon, alamat] = line.split(',').map(s => s.trim());
+                if (nama) {
+                    const anggota = {
+                        id: Date.now() + imported,
+                        no_anggota: `A${String(data.anggota.length + imported + 1).padStart(4, '0')}`,
+                        nama,
+                        telepon: telepon || '',
+                        alamat: alamat || '',
+                        tanggal_bergabung: new Date().toISOString().split('T')[0]
+                    };
+                    data.anggota.push(anggota);
+                    imported++;
+                }
+            });
+            
+            if (imported > 0) {
+                saveData();
+                updateAnggotaTable();
+                updateSelects();
+                updateDashboard();
+                hideModal('modal-bulk-import');
+                document.getElementById('bulk-data').value = '';
+                document.getElementById('csv-file').value = '';
+                alert(`Berhasil mengimpor ${imported} anggota`);
+            } else {
+                alert('Tidak ada data yang valid untuk diimpor');
+            }
+        }
+
+        // Simpanan Functions
+        document.getElementById('form-simpanan').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const formData = new FormData(e.target);
+            const simpanan = {
+                id: Date.now(),
+                anggota_id: parseInt(formData.get('anggota_id')),
+                jenis: formData.get('jenis'),
+                jumlah: parseFormattedNumber(formData.get('jumlah')),
+                keterangan: formData.get('keterangan'),
+                tanggal: new Date().toISOString().split('T')[0]
+            };
+            
+            data.simpanan.push(simpanan);
+            saveData();
+            updateSimpananTable();
+            updateDashboard();
+            hideModal('modal-simpanan');
+            e.target.reset();
+            
+            const anggota = data.anggota.find(a => a.id === simpanan.anggota_id);
+            addTransaction('Simpanan', anggota.nama, simpanan.jenis, simpanan.jumlah);
+        });
+
+        function updateSimpananTable() {
+            const tbody = document.getElementById('table-simpanan');
+            if (data.simpanan.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="6" class="text-center py-4 text-gray-500">Belum ada transaksi simpanan</td></tr>';
+                return;
+            }
+            
+            tbody.innerHTML = data.simpanan.map(simpanan => {
+                const anggota = data.anggota.find(a => a.id === simpanan.anggota_id);
+                return `
+                    <tr>
+                        <td class="py-2">${formatDate(simpanan.tanggal)}</td>
+                        <td class="py-2">${anggota ? anggota.nama : 'Unknown'}</td>
+                        <td class="py-2">${simpanan.jenis}</td>
+                        <td class="py-2">${formatCurrency(simpanan.jumlah)}</td>
+                        <td class="py-2">${simpanan.keterangan || '-'}</td>
+                        <td class="py-2">
+                            <button onclick="deleteSimpanan(${simpanan.id})" class="text-red-600 hover:underline">Hapus</button>
+                        </td>
+                    </tr>
+                `;
+            }).join('');
+            
+            updateSimpananStats();
+        }
+
+        function updateSimpananStats() {
+            const pokok = data.simpanan.filter(s => s.jenis === 'pokok').reduce((sum, s) => sum + s.jumlah, 0);
+            const wajib = data.simpanan.filter(s => s.jenis === 'wajib').reduce((sum, s) => sum + s.jumlah, 0);
+            const sukarela = data.simpanan.filter(s => s.jenis === 'sukarela').reduce((sum, s) => sum + s.jumlah, 0);
+            
+            document.getElementById('simpanan-pokok').textContent = formatCurrency(pokok);
+            document.getElementById('simpanan-wajib').textContent = formatCurrency(wajib);
+            document.getElementById('simpanan-sukarela').textContent = formatCurrency(sukarela);
+        }
+
+        function deleteSimpanan(id) {
+            if (confirm('Yakin ingin menghapus transaksi ini?')) {
+                data.simpanan = data.simpanan.filter(s => s.id !== id);
+                saveData();
+                updateSimpananTable();
+                updateDashboard();
+            }
+        }
+
+        // Simplified Rollover Functions
+        function rolloverPinjaman(id) {
+            const pinjaman = data.pinjaman.find(p => p.id === id);
+            if (!pinjaman || pinjaman.jenis !== 'guling') {
+                alert('Pinjaman tidak ditemukan atau bukan jenis guling');
+                return;
+            }
+            
+            const anggota = data.anggota.find(a => a.id === pinjaman.anggota_id);
+            
+            // Simple rollover info
+            const rolloverInfo = document.getElementById('rollover-info');
+            rolloverInfo.innerHTML = `
+                <div class="bg-blue-50 p-3 rounded mb-3">
+                    <h4 class="font-semibold text-blue-800 mb-2">📋 Pinjaman Saat Ini</h4>
+                    <p><strong>Anggota:</strong> ${anggota ? anggota.nama : 'Unknown'}</p>
+                    <p><strong>Pinjaman Saat Ini:</strong> ${formatCurrency(pinjaman.jumlah)}</p>
+                    <p><strong>Bunga:</strong> ${pinjaman.bunga}% per bulan</p>
+                </div>
+            `;
+            
+            // Set pinjaman ID and default date
+            document.getElementById('rollover-pinjaman-id').value = id;
+            document.querySelector('input[name="tanggal_rollover"]').value = new Date().toISOString().split('T')[0];
+            
+            // Clear previous values
+            document.querySelector('input[name="tambahan_jumlah"]').value = '';
+            document.querySelector('textarea[name="keterangan_rollover"]').value = '';
+            document.getElementById('rollover-calculation').innerHTML = '';
+            
+            showModal('modal-rollover');
+        }
+
+        // Simple calculation preview
+        document.querySelector('input[name="tambahan_jumlah"]').addEventListener('input', function() {
+            updateSimpleRolloverCalculation();
+        });
+
+        function updateSimpleRolloverCalculation() {
+            const pinjamanId = document.getElementById('rollover-pinjaman-id').value;
+            const tambahanJumlah = parseFormattedNumber(document.querySelector('input[name="tambahan_jumlah"]').value);
+            
+            if (!pinjamanId || !tambahanJumlah) {
+                document.getElementById('rollover-calculation').innerHTML = '';
+                return;
+            }
+            
+            const pinjaman = data.pinjaman.find(p => p.id == pinjamanId);
+            if (!pinjaman) return;
+            
+            const jumlahBaru = pinjaman.jumlah + tambahanJumlah;
+            const sisaJangkaWaktu = pinjaman.jangka_waktu - (pinjaman.angsuran_ke || 0);
+            const angsuranPokokBaru = Math.floor(jumlahBaru / sisaJangkaWaktu);
+            const bungaPerBulan = Math.floor(jumlahBaru * pinjaman.bunga / 100);
+            const totalAngsuranBaru = angsuranPokokBaru + bungaPerBulan;
+            
+            document.getElementById('rollover-calculation').innerHTML = `
+                <div class="bg-green-50 p-3 rounded">
+                    <h4 class="font-semibold text-green-800 mb-2">💰 Setelah Rollover</h4>
+                    <div class="space-y-1 text-sm">
+                        <p><strong>Total Pinjaman Baru:</strong> ${formatCurrency(jumlahBaru)}</p>
+                        <p><strong>Angsuran Pokok:</strong> ${formatCurrency(angsuranPokokBaru)}/bulan</p>
+                        <p><strong>Bunga:</strong> ${formatCurrency(bungaPerBulan)}/bulan</p>
+                        <p class="text-lg font-bold text-green-700"><strong>Total Bayar:</strong> ${formatCurrency(totalAngsuranBaru)}/bulan</p>
+                        <p class="text-xs text-gray-600">Sisa ${sisaJangkaWaktu} bulan lagi</p>
+                    </div>
+                </div>
+            `;
+        }
+
+        document.getElementById('form-rollover').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const formData = new FormData(e.target);
+            const pinjamanId = parseInt(formData.get('pinjaman_id'));
+            const tambahanJumlah = parseFormattedNumber(formData.get('tambahan_jumlah'));
+            const keteranganRollover = formData.get('keterangan_rollover');
+            
+            const pinjaman = data.pinjaman.find(p => p.id === pinjamanId);
+            if (!pinjaman) {
+                alert('Pinjaman tidak ditemukan');
+                return;
+            }
+            
+            const anggota = data.anggota.find(a => a.id === pinjaman.anggota_id);
+            const jumlahBaru = pinjaman.jumlah + tambahanJumlah;
+            const sisaJangkaWaktu = pinjaman.jangka_waktu - (pinjaman.angsuran_ke || 0);
+            const angsuranBaru = Math.floor(jumlahBaru / sisaJangkaWaktu) + Math.floor(jumlahBaru * pinjaman.bunga / 100);
+            
+            const confirmMessage = `🔄 KONFIRMASI ROLLOVER
+
+👤 Anggota: ${anggota.nama}
+💰 Tambahan Pinjaman: ${formatCurrency(tambahanJumlah)}
+📊 Total Pinjaman Baru: ${formatCurrency(jumlahBaru)}
+💳 Angsuran Baru: ${formatCurrency(angsuranBaru)}/bulan
+⏰ Sisa Waktu: ${sisaJangkaWaktu} bulan
+
+Lanjutkan proses rollover?`;
+            
+            if (confirm(confirmMessage)) {
+                // Simple rollover process
+                pinjaman.rollover_data = {
+                    tanggal_rollover: formData.get('tanggal_rollover'),
+                    jumlah_awal: pinjaman.jumlah,
+                    tambahan_jumlah: tambahanJumlah,
+                    keterangan: keteranganRollover || 'Rollover pinjaman guling'
+                };
+                
+                // Update loan amounts
+                pinjaman.jumlah = jumlahBaru;
+                pinjaman.rollover = true;
+                pinjaman.sisa_pinjaman += tambahanJumlah;
+                
+                // Recalculate installments
+                pinjaman.nilai_pokok_angsuran = Math.floor(jumlahBaru / sisaJangkaWaktu);
+                pinjaman.total_pembayaran = pinjaman.nilai_pokok_angsuran + Math.floor(jumlahBaru * pinjaman.bunga / 100);
+                
+                saveData();
+                updatePinjamanTable();
+                updateDashboard();
+                hideModal('modal-rollover');
+                e.target.reset();
+                
+                addTransaction('Rollover Pinjaman', anggota.nama, `+${formatCurrency(tambahanJumlah)}`, tambahanJumlah);
+                
+                alert(`✅ ROLLOVER BERHASIL!
+
+👤 ${anggota.nama}
+💰 Pinjaman baru: ${formatCurrency(jumlahBaru)}
+💳 Angsuran baru: ${formatCurrency(angsuranBaru)}/bulan
+
+Rollover telah diproses!`);
+            }
+        });
+
+        // Pinjaman Functions
+        document.getElementById('form-pinjaman').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const formData = new FormData(e.target);
+            const jumlahPinjaman = parseFormattedNumber(formData.get('jumlah'));
+            const jangkaWaktu = parseInt(formData.get('jangka_waktu'));
+            const bunga = parseFloat(formData.get('bunga'));
+            const tanggalPencairan = new Date(formData.get('tanggal_pencairan'));
+            const jenisPinjaman = formData.get('jenis');
+            
+            // For pending loans, no end date (ongoing)
+            let tanggalAkhir = null;
+            if (jenisPinjaman !== 'pending') {
+                const endDate = new Date(tanggalPencairan);
+                endDate.setMonth(endDate.getMonth() + jangkaWaktu);
+                tanggalAkhir = endDate.toISOString().split('T')[0];
+            }
+            
+            // Generate kode pinjaman (YYMMDD + urutan)
+            const dateCode = tanggalPencairan.getFullYear().toString().slice(-2) + 
+                           String(tanggalPencairan.getMonth() + 1).padStart(2, '0') + 
+                           String(tanggalPencairan.getDate()).padStart(2, '0');
+            const sameDateLoans = data.pinjaman.filter(p => p.tanggal === formData.get('tanggal_pencairan'));
+            const sequence = String(sameDateLoans.length + 1).padStart(3, '0');
+            const kodePinjaman = dateCode + sequence;
+            
+            // Calculate payments based on loan type
+            const nilaiPokokAngsuran = jenisPinjaman === 'pending' ? 0 : Math.floor(jumlahPinjaman / jangkaWaktu);
+            const bungaPerBulan = Math.floor(jumlahPinjaman * bunga / 100);
+            const totalPembayaran = jenisPinjaman === 'pending' ? bungaPerBulan : nilaiPokokAngsuran + bungaPerBulan;
+            
+            const pinjaman = {
+                id: Date.now(),
+                kode_pinjaman: kodePinjaman,
+                anggota_id: parseInt(formData.get('anggota_id')),
+                jenis: jenisPinjaman,
+                jumlah: jumlahPinjaman,
+                bunga: bunga,
+                jangka_waktu: jangkaWaktu,
+                keperluan: formData.get('keperluan'),
+                tanggal: formData.get('tanggal_pencairan'),
+                tanggal_akhir: tanggalAkhir,
+                status: 'aktif',
+                sisa_pinjaman: jumlahPinjaman, // Always full amount for pending
+                angsuran_ke: 0,
+                uang_terbayar: jenisPinjaman === 'pending' ? 0 : 0, // Always 0 for pending
+                bunga_terbayar: 0,
+                bunga_sd_des: 0,
+                rollover: false,
+                nilai_pokok_angsuran: nilaiPokokAngsuran,
+                total_pembayaran: totalPembayaran
+            };
+            
+            data.pinjaman.push(pinjaman);
+            saveData();
+            updatePinjamanTable();
+            updateDashboard();
+            hideModal('modal-pinjaman');
+            e.target.reset();
+            
+            const anggota = data.anggota.find(a => a.id === pinjaman.anggota_id);
+            addTransaction('Pinjaman', anggota.nama, pinjaman.jenis, pinjaman.jumlah);
+        });
+
+        function updateBungaPinjaman(select) {
+            const bungaInput = select.closest('form').querySelector('input[name="bunga"]');
+            const jenis = select.value;
+            
+            if (jenis === 'regular') {
+                bungaInput.value = data.settings.bungaRegular;
+            } else if (jenis === 'pending') {
+                bungaInput.value = data.settings.bungaPending;
+            } else if (jenis === 'guling') {
+                bungaInput.value = data.settings.bungaGuling;
+            }
+        }
+
+        function updatePinjamanTable() {
+            const tbody = document.getElementById('table-pinjaman');
+            if (data.pinjaman.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="19" class="text-center py-4 text-gray-500">Belum ada pinjaman</td></tr>';
+                return;
+            }
+            
+            tbody.innerHTML = data.pinjaman.map((pinjaman, index) => {
+                const anggota = data.anggota.find(a => a.id === pinjaman.anggota_id);
+                const statusClass = pinjaman.status === 'lunas' ? 'text-green-600' : 
+                                  pinjaman.status === 'aktif' ? 'text-orange-600' : 'text-gray-600';
+                
+                // Calculate bunga s/d Des (bunga sampai Desember)
+                let bungaSdDes = 0;
+                
+                if (pinjaman.jenis === 'pending') {
+                    // For pending loans: bunga per bulan × jumlah bulan dari awal pembayaran sampai tanggal akhir yang ditetapkan
+                    const loanDate = new Date(pinjaman.tanggal);
+                    const firstPaymentDate = new Date(loanDate);
+                    firstPaymentDate.setMonth(firstPaymentDate.getMonth() + 1); // Pembayaran mulai bulan berikutnya
+                    
+                    // Use custom end date if set, otherwise use December of current year
+                    let endDate;
+                    if (pinjaman.tanggal_akhir) {
+                        endDate = new Date(pinjaman.tanggal_akhir);
+                    } else {
+                        const currentYear = new Date().getFullYear();
+                        endDate = new Date(currentYear, 11, 31); // 31 Desember tahun ini
+                    }
+                    
+                    // Hitung jumlah bulan dari bulan pertama pembayaran sampai tanggal akhir
+                    let monthsToEnd = 0;
+                    if (firstPaymentDate <= endDate) {
+                        monthsToEnd = (endDate.getFullYear() - firstPaymentDate.getFullYear()) * 12 + 
+                                     (endDate.getMonth() - firstPaymentDate.getMonth()) + 1;
+                    }
+                    
+                    // Bunga per bulan (flat rate)
+                    const bungaPerBulan = pinjaman.jumlah * pinjaman.bunga / 100;
+                    // Bunga s/d tanggal akhir = Bunga per bulan × Jumlah bulan sampai tanggal akhir
+                    bungaSdDes = bungaPerBulan * monthsToEnd;
+                } else if (pinjaman.jenis === 'guling' && pinjaman.rollover_data) {
+                    // For rollover loans: calculate bunga lama + bunga baru
+                    const loanDate = new Date(pinjaman.tanggal);
+                    const rolloverDate = new Date(pinjaman.rollover_data.tanggal_rollover);
+                    const currentYear = new Date().getFullYear();
+                    const decemberDate = new Date(currentYear, 11, 31);
+                    
+                    // Bunga lama (dari awal pinjaman sampai rollover)
+                    const firstPaymentDate = new Date(loanDate);
+                    firstPaymentDate.setMonth(firstPaymentDate.getMonth() + 1);
+                    
+                    let monthsBeforeRollover = 0;
+                    if (firstPaymentDate <= rolloverDate) {
+                        monthsBeforeRollover = (rolloverDate.getFullYear() - firstPaymentDate.getFullYear()) * 12 + 
+                                             (rolloverDate.getMonth() - firstPaymentDate.getMonth()) + 1;
+                    }
+                    
+                    const bungaLama = pinjaman.rollover_data.jumlah_awal * pinjaman.bunga / 100 * monthsBeforeRollover;
+                    
+                    // Bunga baru (dari rollover sampai Desember)
+                    const rolloverPaymentDate = new Date(rolloverDate);
+                    rolloverPaymentDate.setMonth(rolloverPaymentDate.getMonth() + 1);
+                    
+                    let monthsAfterRollover = 0;
+                    if (rolloverPaymentDate <= decemberDate) {
+                        monthsAfterRollover = (decemberDate.getFullYear() - rolloverPaymentDate.getFullYear()) * 12 + 
+                                            (decemberDate.getMonth() - rolloverPaymentDate.getMonth()) + 1;
+                    }
+                    
+                    const bungaBaru = pinjaman.jumlah * pinjaman.bunga / 100 * monthsAfterRollover;
+                    
+                    bungaSdDes = bungaLama + bungaBaru;
+                } else {
+                    // For regular loans: use existing calculation
+                    const loanDate = new Date(pinjaman.tanggal);
+                    const firstPaymentDate = new Date(loanDate);
+                    firstPaymentDate.setMonth(firstPaymentDate.getMonth() + 1); // Pembayaran mulai bulan berikutnya
+                    
+                    const currentYear = new Date().getFullYear();
+                    const decemberDate = new Date(currentYear, 11, 31); // 31 Desember tahun ini
+                    
+                    // Hitung jumlah bulan dari bulan pertama pembayaran sampai Desember
+                    let monthsToDecember = 0;
+                    if (firstPaymentDate <= decemberDate) {
+                        monthsToDecember = (decemberDate.getFullYear() - firstPaymentDate.getFullYear()) * 12 + 
+                                         (decemberDate.getMonth() - firstPaymentDate.getMonth()) + 1;
+                        // Batasi maksimal sesuai jangka waktu pinjaman
+                        monthsToDecember = Math.min(monthsToDecember, pinjaman.jangka_waktu);
+                    }
+                    
+                    // Bunga per bulan (flat rate)
+                    const bungaPerBulan = pinjaman.jumlah * pinjaman.bunga / 100;
+                    bungaSdDes = monthsToDecember * bungaPerBulan;
+                }
+                
+                return `
+                    <tr class="border-b hover:bg-gray-50 text-xs">
+                        <td class="py-1 px-1 border-r">${index + 1}</td>
+                        <td class="py-1 px-1 border-r font-mono">${pinjaman.kode_pinjaman || '-'}</td>
+                        <td class="py-1 px-1 border-r max-w-24 truncate" title="${anggota ? anggota.nama : 'Unknown'}">${anggota ? anggota.nama : 'Unknown'}</td>
+                        <td class="py-1 px-1 border-r">
+                            <span class="px-1 py-0.5 rounded text-xs font-semibold ${
+                                pinjaman.jenis === 'regular' ? 'bg-blue-100 text-blue-800' :
+                                pinjaman.jenis === 'pending' ? 'bg-orange-100 text-orange-800' :
+                                pinjaman.jenis === 'guling' ? 'bg-purple-100 text-purple-800' : 'bg-gray-100 text-gray-800'
+                            }">${pinjaman.jenis.charAt(0).toUpperCase()}</span>
+                        </td>
+                        <td class="py-1 px-1 border-r">${new Date(pinjaman.tanggal).toLocaleDateString('id-ID', {day:'2-digit', month:'2-digit', year:'2-digit'})}</td>
+                        <td class="py-1 px-1 border-r text-right">${formatCurrency(pinjaman.jumlah).replace('Rp', '').trim()}</td>
+                        <td class="py-1 px-1 border-r text-center">${pinjaman.jangka_waktu}</td>
+                        <td class="py-1 px-1 border-r text-right">${pinjaman.jenis === 'pending' ? '-' : formatCurrency(pinjaman.nilai_pokok_angsuran || Math.floor(pinjaman.jumlah / pinjaman.jangka_waktu)).replace('Rp', '').trim()}</td>
+                        <td class="py-1 px-1 border-r text-center">${pinjaman.bunga}%</td>
+                        <td class="py-1 px-1 border-r text-right">${formatCurrency(pinjaman.total_pembayaran || 0).replace('Rp', '').trim()}</td>
+                        <td class="py-1 px-1 border-r">
+                            ${pinjaman.jenis === 'pending' ? 
+                                `<input type="date" value="${pinjaman.tanggal_akhir || ''}" 
+                                 onchange="updateTanggalAkhir(${pinjaman.id}, this.value)" 
+                                 class="text-xs p-0.5 border rounded w-20" 
+                                 placeholder="Set">` : 
+                                new Date(pinjaman.tanggal_akhir || pinjaman.tanggal).toLocaleDateString('id-ID', {day:'2-digit', month:'2-digit', year:'2-digit'})
+                            }
+                        </td>
+                        <td class="py-1 px-1 border-r text-center">${pinjaman.angsuran_ke || 0}</td>
+                        <td class="py-1 px-1 border-r text-right">${formatCurrency(pinjaman.sisa_pinjaman).replace('Rp', '').trim()}</td>
+                        <td class="py-1 px-1 border-r text-right">${pinjaman.jenis === 'pending' ? '-' : formatCurrency((pinjaman.nilai_pokok_angsuran || Math.floor(pinjaman.jumlah / pinjaman.jangka_waktu)) * (pinjaman.angsuran_ke || 0)).replace('Rp', '').trim()}</td>
+                        <td class="py-1 px-1 border-r text-right">${formatCurrency(pinjaman.bunga_terbayar || 0).replace('Rp', '').trim()}</td>
+                        <td class="py-1 px-1 border-r text-right">${formatCurrency(bungaSdDes).replace('Rp', '').trim()}</td>
+                        <td class="py-1 px-1 border-r text-center">${pinjaman.rollover ? '✓' : '-'}</td>
+                        <td class="py-1 px-1 border-r text-center">
+                            <span class="px-1 py-0.5 rounded text-xs font-semibold ${
+                                pinjaman.status === 'lunas' ? 'bg-green-100 text-green-800' :
+                                pinjaman.status === 'aktif' ? 'bg-orange-100 text-orange-800' : 'bg-gray-100 text-gray-800'
+                            }">${pinjaman.status === 'lunas' ? 'LUNAS' : pinjaman.status === 'aktif' ? 'AKTIF' : 'PENDING'}</span>
+                        </td>
+                        <td class="py-1 px-1">
+                            <div class="flex flex-wrap gap-1">
+                                ${pinjaman.status === 'aktif' ? 
+                                    `<button onclick="bayarAngsuran(${pinjaman.id})" class="text-blue-600 hover:underline text-xs" title="Bayar Angsuran">💰</button>` : ''}
+                                <button onclick="editAngsuran(${pinjaman.id})" class="text-green-600 hover:underline text-xs" title="Edit Angsuran">✏️</button>
+                                ${pinjaman.jenis === 'guling' && pinjaman.status === 'aktif' ? 
+                                    `<button onclick="rolloverPinjaman(${pinjaman.id})" class="text-orange-600 hover:underline text-xs" title="Rollover">🔄</button>` : ''}
+                                <button onclick="editPinjaman(${pinjaman.id})" class="text-yellow-600 hover:underline text-xs" title="Edit">📝</button>
+                                <button onclick="toggleStatusPinjaman(${pinjaman.id})" class="text-indigo-600 hover:underline text-xs" title="Toggle Status">${pinjaman.status === 'lunas' ? '🔄' : '✅'}</button>
+                                <button onclick="deletePinjaman(${pinjaman.id})" class="text-red-600 hover:underline text-xs" title="Hapus">🗑️</button>
+                                <button onclick="detailPinjaman(${pinjaman.id})" class="text-purple-600 hover:underline text-xs" title="Detail">👁️</button>
+                            </div>
+                        </td>
+                    </tr>
+                `;
+            }).join('');
+            
+            updatePinjamanStats();
+        }
+
+        function updatePinjamanStats() {
+            const aktif = data.pinjaman.filter(p => p.status === 'aktif').reduce((sum, p) => sum + p.sisa_pinjaman, 0);
+            const lunas = data.pinjaman.filter(p => p.status === 'lunas').reduce((sum, p) => sum + p.jumlah, 0);
+            
+            // Total bunga yang sudah diterima dari semua anggota peminjam
+            // dari angsuran pertama sampai bulan berjalan
+            const totalBungaDiterima = data.pinjaman.reduce((sum, p) => {
+                return sum + (p.bunga_terbayar || 0);
+            }, 0);
+            
+            document.getElementById('pinjaman-aktif').textContent = formatCurrency(aktif);
+            document.getElementById('pinjaman-lunas').textContent = formatCurrency(lunas);
+            document.getElementById('total-bunga').textContent = formatCurrency(totalBungaDiterima);
+        }
+
+        function lunasiPinjaman(id) {
+            if (confirm('Yakin ingin melunasi pinjaman ini?')) {
+                const pinjaman = data.pinjaman.find(p => p.id === id);
+                if (pinjaman) {
+                    pinjaman.status = 'lunas';
+                    pinjaman.sisa_pinjaman = 0;
+                    pinjaman.tanggal_lunas = new Date().toISOString().split('T')[0];
+                    pinjaman.keterangan_lunas = 'Pinjaman Lunas';
+                    saveData();
+                    updatePinjamanTable();
+                    updateDashboard();
+                    
+                    const anggota = data.anggota.find(a => a.id === pinjaman.anggota_id);
+                    addTransaction('Pelunasan', anggota.nama, 'Pinjaman', pinjaman.jumlah);
+                }
+            }
+        }
+
+        function toggleStatusPinjaman(id) {
+            const pinjaman = data.pinjaman.find(p => p.id === id);
+            if (!pinjaman) return;
+            
+            const anggota = data.anggota.find(a => a.id === pinjaman.anggota_id);
+            const currentStatus = pinjaman.status;
+            
+            if (currentStatus === 'lunas') {
+                // Change from lunas to aktif
+                if (confirm(`Ubah status pinjaman ${anggota.nama} dari LUNAS ke AKTIF?`)) {
+                    pinjaman.status = 'aktif';
+                    // Recalculate sisa_pinjaman based on angsuran_ke
+                    if (pinjaman.jenis === 'pending') {
+                        pinjaman.sisa_pinjaman = pinjaman.jumlah; // Always full amount for pending
+                    } else {
+                        const angsuranPokok = pinjaman.nilai_pokok_angsuran || Math.floor(pinjaman.jumlah / pinjaman.jangka_waktu);
+                        pinjaman.sisa_pinjaman = pinjaman.jumlah - (angsuranPokok * (pinjaman.angsuran_ke || 0));
+                    }
+                    delete pinjaman.tanggal_lunas;
+                    delete pinjaman.keterangan_lunas;
+                    
+                    saveData();
+                    updatePinjamanTable();
+                    updateDashboard();
+                    addTransaction('Status Diubah', anggota.nama, 'Lunas → Aktif', 0);
+                }
+            } else {
+                // Change from aktif/pending to lunas
+                if (confirm(`Ubah status pinjaman ${anggota.nama} menjadi LUNAS?`)) {
+                    pinjaman.status = 'lunas';
+                    pinjaman.sisa_pinjaman = 0;
+                    pinjaman.tanggal_lunas = new Date().toISOString().split('T')[0];
+                    pinjaman.keterangan_lunas = 'Pinjaman Lunas';
+                    
+                    saveData();
+                    updatePinjamanTable();
+                    updateDashboard();
+                    addTransaction('Status Diubah', anggota.nama, 'Aktif → Lunas', 0);
+                }
+            }
+        }
+
+        function bayarAngsuran(id) {
+            const pinjaman = data.pinjaman.find(p => p.id === id);
+            if (!pinjaman) return;
+            
+            const anggota = data.anggota.find(a => a.id === pinjaman.anggota_id);
+            const angsuranPokok = pinjaman.jenis === 'pending' ? 0 : (pinjaman.nilai_pokok_angsuran || Math.floor(pinjaman.jumlah / pinjaman.jangka_waktu));
+            const bungaBulan = Math.floor(pinjaman.jumlah * pinjaman.bunga / 100);
+            const totalAngsuran = pinjaman.jenis === 'pending' ? bungaBulan : angsuranPokok + bungaBulan;
+            
+            const confirmMessage = pinjaman.jenis === 'pending' ? 
+                `Bayar bunga bulan ke-${(pinjaman.angsuran_ke || 0) + 1} untuk ${anggota.nama}?\nBunga: ${formatCurrency(bungaBulan)}\nTotal: ${formatCurrency(totalAngsuran)}` :
+                `Bayar angsuran ke-${(pinjaman.angsuran_ke || 0) + 1} untuk ${anggota.nama}?\nPokok: ${formatCurrency(angsuranPokok)}\nBunga: ${formatCurrency(bungaBulan)}\nTotal: ${formatCurrency(totalAngsuran)}`;
+            
+            if (confirm(confirmMessage)) {
+                pinjaman.angsuran_ke = (pinjaman.angsuran_ke || 0) + 1;
+                
+                // For pending loans, only pay interest, principal remains the same
+                if (pinjaman.jenis === 'pending') {
+                    pinjaman.sisa_pinjaman = pinjaman.jumlah; // Sisa pinjaman tetap sama dengan jumlah awal
+                    pinjaman.uang_terbayar = 0; // Uang terbayar selalu 0 untuk pending
+                } else {
+                    pinjaman.sisa_pinjaman -= angsuranPokok;
+                    pinjaman.uang_terbayar = (pinjaman.nilai_pokok_angsuran || Math.floor(pinjaman.jumlah / pinjaman.jangka_waktu)) * pinjaman.angsuran_ke;
+                }
+                
+                pinjaman.bunga_terbayar = (pinjaman.bunga_terbayar || 0) + bungaBulan;
+                
+                // For pending loans, never mark as lunas through regular payments
+                if (pinjaman.jenis !== 'pending' && (pinjaman.angsuran_ke >= pinjaman.jangka_waktu || pinjaman.sisa_pinjaman <= 0)) {
+                    pinjaman.status = 'lunas';
+                    pinjaman.sisa_pinjaman = 0;
+                    pinjaman.tanggal_lunas = new Date().toISOString().split('T')[0];
+                    pinjaman.keterangan_lunas = 'Pinjaman Lunas';
+                }
+                
+                saveData();
+                updatePinjamanTable();
+                updateDashboard();
+                
+                const transactionType = pinjaman.jenis === 'pending' ? 'Pembayaran Bunga' : 'Pembayaran Angsuran';
+                addTransaction(transactionType, anggota.nama, `Bulan ke-${pinjaman.angsuran_ke}`, totalAngsuran);
+            }
+        }
+
+        function editAngsuran(id) {
+            const pinjaman = data.pinjaman.find(p => p.id === id);
+            if (!pinjaman) return;
+            
+            const maxAngsuran = pinjaman.jenis === 'pending' ? 999 : pinjaman.jangka_waktu;
+            const newAngsuranKe = prompt(`Edit angsuran ke- (saat ini: ${pinjaman.angsuran_ke || 0})${pinjaman.jenis === 'pending' ? ' [Pending: tidak terbatas]' : ` [Max: ${pinjaman.jangka_waktu}]`}`, pinjaman.angsuran_ke || 0);
+            
+            if (newAngsuranKe !== null) {
+                const angsuranKe = parseInt(newAngsuranKe);
+                if (angsuranKe >= 0 && angsuranKe <= maxAngsuran) {
+                    pinjaman.angsuran_ke = angsuranKe;
+                    
+                    // Recalculate based on new angsuran_ke
+                    const bungaBulan = Math.floor(pinjaman.jumlah * pinjaman.bunga / 100);
+                    
+                    if (pinjaman.jenis === 'pending') {
+                        // For pending loans, sisa_pinjaman always equals jumlah
+                        pinjaman.sisa_pinjaman = pinjaman.jumlah;
+                        pinjaman.uang_terbayar = 0; // Always 0 for pending
+                        pinjaman.bunga_terbayar = bungaBulan * angsuranKe;
+                        // Pending loans don't automatically become lunas
+                        pinjaman.status = 'aktif';
+                    } else {
+                        // For regular loans
+                        const angsuranPokok = pinjaman.nilai_pokok_angsuran || Math.floor(pinjaman.jumlah / pinjaman.jangka_waktu);
+                        pinjaman.sisa_pinjaman = pinjaman.jumlah - (angsuranPokok * angsuranKe);
+                        pinjaman.uang_terbayar = angsuranPokok * angsuranKe;
+                        pinjaman.bunga_terbayar = bungaBulan * angsuranKe;
+                        
+                        if (angsuranKe >= pinjaman.jangka_waktu) {
+                            pinjaman.status = 'lunas';
+                            pinjaman.sisa_pinjaman = 0;
+                            pinjaman.tanggal_lunas = new Date().toISOString().split('T')[0];
+                            pinjaman.keterangan_lunas = 'Pinjaman Lunas';
+                        } else {
+                            pinjaman.status = 'aktif';
+                            delete pinjaman.tanggal_lunas;
+                            delete pinjaman.keterangan_lunas;
+                        }
+                    }
+                    
+                    saveData();
+                    updatePinjamanTable();
+                    updateDashboard();
+                } else {
+                    alert(`Angsuran ke- harus antara 0 dan ${maxAngsuran}`);
+                }
+            }
+        }
+
+        function editPinjaman(id) {
+            const pinjaman = data.pinjaman.find(p => p.id === id);
+            if (!pinjaman) return;
+            
+            // Simple edit - you can expand this to show a modal
+            const newJumlah = prompt(`Edit jumlah pinjaman (saat ini: ${formatCurrency(pinjaman.jumlah)})`, pinjaman.jumlah);
+            if (newJumlah !== null) {
+                const jumlah = parseInt(newJumlah.replace(/\./g, ''));
+                if (jumlah > 0) {
+                    pinjaman.jumlah = jumlah;
+                    pinjaman.nilai_pokok_angsuran = Math.floor(jumlah / pinjaman.jangka_waktu);
+                    const bungaPerBulan = Math.floor(jumlah * pinjaman.bunga / 100);
+                    pinjaman.total_pembayaran = pinjaman.nilai_pokok_angsuran + bungaPerBulan;
+                    
+                    // Recalculate sisa_pinjaman
+                    const angsuranPokok = pinjaman.nilai_pokok_angsuran;
+                    pinjaman.sisa_pinjaman = jumlah - (angsuranPokok * (pinjaman.angsuran_ke || 0));
+                    
+                    saveData();
+                    updatePinjamanTable();
+                    updateDashboard();
+                }
+            }
+        }
+
+        function detailPinjaman(id) {
+            const pinjaman = data.pinjaman.find(p => p.id === id);
+            if (!pinjaman) return;
+            
+            const anggota = data.anggota.find(a => a.id === pinjaman.anggota_id);
+            const angsuranPokok = pinjaman.jenis === 'pending' ? 0 : (pinjaman.nilai_pokok_angsuran || Math.floor(pinjaman.jumlah / pinjaman.jangka_waktu));
+            const bungaBulan = Math.floor(pinjaman.jumlah * pinjaman.bunga / 100);
+            const totalPerBulan = pinjaman.jenis === 'pending' ? bungaBulan : angsuranPokok + bungaBulan;
+            
+            let detailMessage = `Detail Pinjaman ${pinjaman.kode_pinjaman || 'N/A'}
+            
+Anggota: ${anggota ? anggota.nama : 'Unknown'}
+Jenis: ${pinjaman.jenis.toUpperCase()}
+Jumlah Pinjaman: ${formatCurrency(pinjaman.jumlah)}
+Jangka Waktu: ${pinjaman.jangka_waktu} bulan
+Bunga: ${pinjaman.bunga}% per bulan`;
+
+            // Add rollover information if applicable
+            if (pinjaman.jenis === 'guling' && pinjaman.rollover_data) {
+                detailMessage += `
+
+=== INFORMASI ROLLOVER ===
+Jumlah Awal: ${formatCurrency(pinjaman.rollover_data.jumlah_awal)}
+Tambahan: ${formatCurrency(pinjaman.rollover_data.tambahan_jumlah)}
+Tanggal Rollover: ${formatDate(pinjaman.rollover_data.tanggal_rollover)}
+Keterangan: ${pinjaman.rollover_data.keterangan || '-'}`;
+            }
+
+            if (pinjaman.jenis === 'pending') {
+                detailMessage += `
+Angsuran Pokok: - (Tidak ada)
+Bunga per Bulan: ${formatCurrency(bungaBulan)}
+Total per Bulan: ${formatCurrency(totalPerBulan)} (Hanya bunga)
+
+Status: ${pinjaman.status}
+Pembayaran Bunga ke-: ${pinjaman.angsuran_ke || 0} (Tidak terbatas)
+Sisa Pinjaman: ${formatCurrency(pinjaman.sisa_pinjaman)} (Tetap)
+Pokok Terbayar: - (Tidak ada)
+Bunga Terbayar: ${formatCurrency(pinjaman.bunga_terbayar || 0)}
+
+Tanggal Pencairan: ${formatDate(pinjaman.tanggal)}
+Tanggal Jatuh Tempo: Tidak Ada (Pending)`;
+            } else {
+                detailMessage += `
+Angsuran Pokok: ${formatCurrency(angsuranPokok)}
+Bunga per Bulan: ${formatCurrency(bungaBulan)}
+Total per Bulan: ${formatCurrency(totalPerBulan)}
+
+Status: ${pinjaman.status}
+Angsuran ke-: ${pinjaman.angsuran_ke || 0} dari ${pinjaman.jangka_waktu}
+Sisa Pinjaman: ${formatCurrency(pinjaman.sisa_pinjaman)}
+Pokok Terbayar: ${formatCurrency(angsuranPokok * (pinjaman.angsuran_ke || 0))}
+Bunga Terbayar: ${formatCurrency(pinjaman.bunga_terbayar || 0)}
+
+Tanggal Pencairan: ${formatDate(pinjaman.tanggal)}
+Tanggal Jatuh Tempo: ${formatDate(pinjaman.tanggal_akhir || pinjaman.tanggal)}`;
+            }
+            
+            detailMessage += `
+Keperluan: ${pinjaman.keperluan || '-'}`;
+
+            // Add status information
+            if (pinjaman.status === 'lunas' && pinjaman.tanggal_lunas) {
+                detailMessage += `
+
+=== STATUS PELUNASAN ===
+Status: LUNAS
+Tanggal Lunas: ${formatDate(pinjaman.tanggal_lunas)}
+Keterangan: ${pinjaman.keterangan_lunas || 'Pinjaman Lunas'}`;
+            }
+            
+            alert(detailMessage);
+        }
+
+        function updateTanggalAkhir(id, tanggalAkhir) {
+            const pinjaman = data.pinjaman.find(p => p.id === id);
+            if (pinjaman) {
+                pinjaman.tanggal_akhir = tanggalAkhir;
+                saveData();
+                updatePinjamanTable();
+                
+                const anggota = data.anggota.find(a => a.id === pinjaman.anggota_id);
+                if (tanggalAkhir) {
+                    addTransaction('Update Tanggal Akhir', anggota.nama, 'Pending', 0);
+                }
+            }
+        }
+
+        function deletePinjaman(id) {
+            if (confirm('Yakin ingin menghapus pinjaman ini?')) {
+                data.pinjaman = data.pinjaman.filter(p => p.id !== id);
+                saveData();
+                updatePinjamanTable();
+                updateDashboard();
+            }
+        }
+
+        // SHU Functions
+        document.getElementById('form-shu').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const formData = new FormData(e.target);
+            const pendapatan = parseFormattedNumber(formData.get('pendapatan'));
+            const biaya = parseFormattedNumber(formData.get('biaya'));
+            const shu = {
+                id: Date.now(),
+                tahun: parseInt(formData.get('tahun')),
+                pendapatan: pendapatan,
+                biaya: biaya,
+                shu_bersih: pendapatan - biaya,
+                keterangan: formData.get('keterangan'),
+                tanggal: new Date().toISOString().split('T')[0],
+                status: 'belum_distribusi'
+            };
+            
+            data.shu.push(shu);
+            saveData();
+            updateSHUTable();
+            updateSHUPage();
+            updateDashboard();
+            hideModal('modal-shu');
+            e.target.reset();
+        });
+
+        function loadSHUComponents() {
+            const tbody = document.getElementById('shu-components-table');
+            const currentYear = new Date().getFullYear();
+            const yearSHU = data.shu.filter(s => s.tahun === currentYear);
+            const totalSHUTersedia = yearSHU.reduce((sum, s) => sum + s.shu_bersih, 0);
+            
+            tbody.innerHTML = data.shuComponents.map((comp, index) => {
+                const nilaiRupiah = Math.floor(totalSHUTersedia * comp.persentase / 100);
+                return `
+                    <tr class="hover:bg-gray-50">
+                        <td class="border border-gray-300 px-3 py-2 text-center font-medium">${index + 1}</td>
+                        <td class="border border-gray-300 px-3 py-2">
+                            <input type="text" value="${comp.nama}" 
+                                   onchange="updateSHUComponent(${comp.id}, 'nama', this.value)" 
+                                   class="w-full p-1 border-0 bg-transparent focus:bg-white focus:border focus:border-blue-300 rounded">
+                        </td>
+                        <td class="border border-gray-300 px-3 py-2 text-center">
+                            <div class="flex items-center justify-center space-x-1">
+                                <input type="number" value="${comp.persentase}" 
+                                       onchange="updateSHUComponent(${comp.id}, 'persentase', this.value)" 
+                                       class="w-16 p-1 text-center border border-gray-300 rounded" 
+                                       min="0" max="100" step="0.1">
+                                <span class="text-sm">%</span>
+                                <div class="flex flex-col">
+                                    <button onclick="adjustPercentage(${comp.id}, 0.1)" class="text-xs text-blue-600 hover:text-blue-800">▲</button>
+                                    <button onclick="adjustPercentage(${comp.id}, -0.1)" class="text-xs text-blue-600 hover:text-blue-800">▼</button>
+                                </div>
+                            </div>
+                        </td>
+                        <td class="border border-gray-300 px-3 py-2 text-right font-medium">
+                            ${formatCurrency(nilaiRupiah)}
+                        </td>
+                        <td class="border border-gray-300 px-3 py-2 text-center">
+                            <button onclick="deleteSHUComponent(${comp.id})" 
+                                    class="bg-red-500 text-white px-2 py-1 rounded text-xs hover:bg-red-600">
+                                🗑️ Hapus
+                            </button>
+                        </td>
+                    </tr>
+                `;
+            }).join('');
+            
+            updateSHUTotals();
+        }
+
+        function updateSHUTotals() {
+            const totalPersentase = data.shuComponents.reduce((sum, comp) => sum + comp.persentase, 0);
+            const currentYear = new Date().getFullYear();
+            const yearSHU = data.shu.filter(s => s.tahun === currentYear);
+            const totalSHUTersedia = yearSHU.reduce((sum, s) => sum + s.shu_bersih, 0);
+            const totalNilai = Math.floor(totalSHUTersedia * totalPersentase / 100);
+            
+            document.getElementById('total-persentase').textContent = totalPersentase.toFixed(1) + '%';
+            document.getElementById('total-nilai').textContent = formatCurrency(totalNilai);
+            
+            const statusElement = document.getElementById('status-persentase');
+            if (totalPersentase === 100) {
+                statusElement.innerHTML = '✅ 100%';
+                statusElement.className = 'px-2 py-1 rounded text-sm font-semibold bg-green-100 text-green-800';
+            } else if (totalPersentase > 100) {
+                statusElement.innerHTML = `❌ ${totalPersentase.toFixed(1)}%`;
+                statusElement.className = 'px-2 py-1 rounded text-sm font-semibold bg-red-100 text-red-800';
+            } else {
+                statusElement.innerHTML = `⚠️ ${totalPersentase.toFixed(1)}%`;
+                statusElement.className = 'px-2 py-1 rounded text-sm font-semibold bg-yellow-100 text-yellow-800';
+            }
+        }
+
+        function adjustPercentage(id, adjustment) {
+            const component = data.shuComponents.find(c => c.id === id);
+            if (component) {
+                const newPercentage = Math.max(0, Math.min(100, component.persentase + adjustment));
+                component.persentase = Math.round(newPercentage * 10) / 10; // Round to 1 decimal
+                saveData();
+                loadSHUComponents();
+            }
+        }
+
+        function resetSHUDefault() {
+            if (confirm('Reset ke pengaturan default? Semua perubahan akan hilang.')) {
+                data.shuComponents = [
+                    { id: 1, nama: 'Konsumsi', persentase: 40 },
+                    { id: 2, nama: 'Jasa Anggota atas Simpanan', persentase: 25 },
+                    { id: 3, nama: 'Jasa Anggota atas Transaksi', persentase: 25 },
+                    { id: 4, nama: 'Jasa Pengurus', persentase: 10 },
+                    { id: 5, nama: 'Dana Piknik', persentase: 0 }
+                ];
+                saveData();
+                loadSHUComponents();
+            }
+        }
+
+        function validateAndDistributeSHU() {
+            const totalPersentase = data.shuComponents.reduce((sum, comp) => sum + comp.persentase, 0);
+            
+            if (totalPersentase !== 100) {
+                alert(`Total persentase harus 100%! Saat ini: ${totalPersentase.toFixed(1)}%`);
+                return;
+            }
+            
+            const currentYear = new Date().getFullYear();
+            const yearSHU = data.shu.filter(s => s.tahun === currentYear && s.status === 'belum_distribusi');
+            
+            if (yearSHU.length === 0) {
+                alert('Tidak ada SHU yang belum didistribusikan untuk tahun ini');
+                return;
+            }
+            
+            const totalSHU = yearSHU.reduce((sum, s) => sum + s.shu_bersih, 0);
+            
+            let confirmMessage = `🎯 DISTRIBUSI SHU TAHUN ${currentYear}\n\n`;
+            confirmMessage += `💰 Total SHU: ${formatCurrency(totalSHU)}\n\n`;
+            confirmMessage += `📊 RINCIAN DISTRIBUSI:\n`;
+            
+            data.shuComponents.forEach((comp, index) => {
+                const nilai = Math.floor(totalSHU * comp.persentase / 100);
+                confirmMessage += `${index + 1}. ${comp.nama}: ${comp.persentase}% = ${formatCurrency(nilai)}\n`;
+            });
+            
+            confirmMessage += `\n✅ Total: 100% = ${formatCurrency(totalSHU)}\n\n`;
+            confirmMessage += `Lanjutkan distribusi SHU?`;
+            
+            if (confirm(confirmMessage)) {
+                yearSHU.forEach(shu => {
+                    shu.status = 'sudah_distribusi';
+                    shu.tanggal_distribusi = new Date().toISOString().split('T')[0];
+                    shu.distribusi_detail = data.shuComponents.map(comp => ({
+                        komponen: comp.nama,
+                        persentase: comp.persentase,
+                        nilai: Math.floor(totalSHU * comp.persentase / 100)
+                    }));
+                });
+                
+                saveData();
+                updateSHUTable();
+                updateSHUPage();
+                alert('✅ SHU berhasil didistribusikan sesuai komponen yang ditetapkan!');
+            }
+        }
+
+        function addSHUComponent() {
+            const newComponent = {
+                id: Date.now(),
+                nama: 'Komponen Baru',
+                persentase: 0
+            };
+            data.shuComponents.push(newComponent);
+            saveData();
+            loadSHUComponents();
+        }
+
+        function updateSHUComponent(id, field, value) {
+            const component = data.shuComponents.find(c => c.id === id);
+            if (component) {
+                if (field === 'persentase') {
+                    const newValue = parseFloat(value) || 0;
+                    component[field] = Math.max(0, Math.min(100, newValue));
+                } else {
+                    component[field] = value;
+                }
+                saveData();
+                loadSHUComponents();
+            }
+        }
+
+        function deleteSHUComponent(id) {
+            if (data.shuComponents.length <= 1) {
+                alert('Minimal harus ada satu komponen distribusi SHU');
+                return;
+            }
+            
+            if (confirm('Yakin ingin menghapus komponen ini?')) {
+                data.shuComponents = data.shuComponents.filter(c => c.id !== id);
+                saveData();
+                loadSHUComponents();
+            }
+        }
+
+        function distributeAllSHU() {
+            const currentYear = new Date().getFullYear();
+            const yearSHU = data.shu.filter(s => s.tahun === currentYear && s.status === 'belum_distribusi');
+            
+            if (yearSHU.length === 0) {
+                alert('Tidak ada SHU yang belum didistribusikan untuk tahun ini');
+                return;
+            }
+            
+            const totalSHU = yearSHU.reduce((sum, s) => sum + s.shu_bersih, 0);
+            
+            if (confirm(`Distribusikan SHU sebesar ${formatCurrency(totalSHU)}?`)) {
+                yearSHU.forEach(shu => {
+                    shu.status = 'sudah_distribusi';
+                    shu.tanggal_distribusi = new Date().toISOString().split('T')[0];
+                });
+                
+                saveData();
+                updateSHUTable();
+                updateSHUPage();
+                alert('SHU berhasil didistribusikan');
+            }
+        }
+
+        function updateSHUPage() {
+            const currentYear = new Date().getFullYear();
+            const yearSHU = data.shu.filter(s => s.tahun === currentYear);
+            const totalSHU = yearSHU.reduce((sum, s) => sum + s.shu_bersih, 0);
+            const distributed = yearSHU.filter(s => s.status === 'sudah_distribusi').length > 0;
+            
+            document.getElementById('shu-tahun-ini').textContent = formatCurrency(totalSHU);
+            document.getElementById('periode-shu').textContent = currentYear;
+            document.getElementById('status-distribusi').textContent = distributed ? 'Sudah didistribusikan' : 'Belum didistribusikan';
+            
+            updateSHUTable();
+        }
+
+        function updateSHUTable() {
+            const tbody = document.getElementById('table-shu');
+            if (data.shu.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="5" class="text-center py-4 text-gray-500">Belum ada data SHU</td></tr>';
+                return;
+            }
+            
+            tbody.innerHTML = data.shu.map(shu => {
+                const statusClass = shu.status === 'sudah_distribusi' ? 'text-green-600' : 'text-orange-600';
+                return `
+                    <tr>
+                        <td class="py-2">${shu.tahun}</td>
+                        <td class="py-2">${formatCurrency(shu.shu_bersih)}</td>
+                        <td class="py-2">${shu.status === 'sudah_distribusi' ? formatCurrency(shu.shu_bersih) : 'Rp 0'}</td>
+                        <td class="py-2 ${statusClass}">${shu.status === 'sudah_distribusi' ? 'Sudah' : 'Belum'}</td>
+                        <td class="py-2">
+                            <button onclick="deleteSHU(${shu.id})" class="text-red-600 hover:underline">Hapus</button>
+                        </td>
+                    </tr>
+                `;
+            }).join('');
+        }
+
+        function deleteSHU(id) {
+            if (confirm('Yakin ingin menghapus data SHU ini?')) {
+                data.shu = data.shu.filter(s => s.id !== id);
+                saveData();
+                updateSHUTable();
+                updateSHUPage();
+                updateDashboard();
+            }
+        }
+
+        // Settings Functions
+        function saveInterestSettings() {
+            data.settings.bungaRegular = parseFloat(document.getElementById('bunga-regular').value);
+            data.settings.bungaPending = parseFloat(document.getElementById('bunga-pending').value);
+            data.settings.bungaGuling = parseFloat(document.getElementById('bunga-guling').value);
+            saveData();
+            alert('Pengaturan bunga berhasil disimpan');
+        }
+
+        function saveGeneralSettings() {
+            data.settings.namaKoperasi = document.getElementById('nama-koperasi').value;
+            data.settings.tahunBuku = parseInt(document.getElementById('tahun-buku').value);
+            data.settings.simpananPokokMin = parseFormattedNumber(document.getElementById('simpanan-pokok-min').value);
+            saveData();
+            alert('Pengaturan umum berhasil disimpan');
+        }
+
+        // Backup & Restore Functions
+        function backupData() {
+            const dataStr = JSON.stringify(data, null, 2);
+            const dataBlob = new Blob([dataStr], {type: 'application/json'});
+            const url = URL.createObjectURL(dataBlob);
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = `koperasi_backup_${new Date().toISOString().split('T')[0]}.json`;
+            link.click();
+            URL.revokeObjectURL(url);
+        }
+
+        function restoreData(input) {
+            const file = input.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    try {
+                        const restoredData = JSON.parse(e.target.result);
+                        if (confirm('Yakin ingin mengembalikan data? Data saat ini akan ditimpa.')) {
+                            data = restoredData;
+                            saveData();
+                            loadData();
+                            alert('Data berhasil dikembalikan');
+                        }
+                    } catch (error) {
+                        alert('File backup tidak valid');
+                    }
+                };
+                reader.readAsText(file);
+            }
+        }
+
+        function clearAllData() {
+            if (confirm('PERINGATAN: Ini akan menghapus SEMUA data. Yakin ingin melanjutkan?')) {
+                if (confirm('Konfirmasi sekali lagi: Semua data akan hilang permanen!')) {
+                    localStorage.removeItem('koperasiData');
+                    location.reload();
+                }
+            }
+        }
+
+        // Report Functions
+        function generateReport() {
+            const periode = document.getElementById('periode-laporan').value;
+            const dariTanggal = document.getElementById('dari-tanggal').value;
+            const sampaiTanggal = document.getElementById('sampai-tanggal').value;
+            
+            let filteredSimpanan = data.simpanan;
+            let filteredPinjaman = data.pinjaman;
+            
+            if (dariTanggal && sampaiTanggal) {
+                filteredSimpanan = data.simpanan.filter(s => s.tanggal >= dariTanggal && s.tanggal <= sampaiTanggal);
+                filteredPinjaman = data.pinjaman.filter(p => p.tanggal >= dariTanggal && p.tanggal <= sampaiTanggal);
+            }
+            
+            const totalSimpanan = filteredSimpanan.reduce((sum, s) => sum + s.jumlah, 0);
+            const totalPinjaman = filteredPinjaman.reduce((sum, p) => sum + p.jumlah, 0);
+            const totalBunga = filteredPinjaman.reduce((sum, p) => sum + (p.jumlah * p.bunga / 100), 0);
+            
+            const reportContent = `
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
+                    <div class="bg-blue-50 p-4 rounded">
+                        <h4 class="font-semibold text-blue-800">Total Simpanan</h4>
+                        <p class="text-2xl font-bold text-blue-600">${formatCurrency(totalSimpanan)}</p>
+                    </div>
+                    <div class="bg-green-50 p-4 rounded">
+                        <h4 class="font-semibold text-green-800">Total Pinjaman</h4>
+                        <p class="text-2xl font-bold text-green-600">${formatCurrency(totalPinjaman)}</p>
+                    </div>
+                    <div class="bg-purple-50 p-4 rounded">
+                        <h4 class="font-semibold text-purple-800">Total Bunga</h4>
+                        <p class="text-2xl font-bold text-purple-600">${formatCurrency(totalBunga)}</p>
+                    </div>
+                </div>
+                <div class="bg-gray-50 p-4 rounded">
+                    <h4 class="font-semibold mb-2">Ringkasan Periode</h4>
+                    <p>Dari: ${dariTanggal || 'Awal'} - Sampai: ${sampaiTanggal || 'Sekarang'}</p>
+                    <p>Jumlah Transaksi Simpanan: ${filteredSimpanan.length}</p>
+                    <p>Jumlah Transaksi Pinjaman: ${filteredPinjaman.length}</p>
+                    <p>Saldo Bersih: ${formatCurrency(totalSimpanan - totalPinjaman)}</p>
+                </div>
+            `;
+            
+            document.getElementById('laporan-content').innerHTML = reportContent;
+        }
+
+        function exportCSV(type) {
+            let csvContent = '';
+            let filename = '';
+            
+            switch(type) {
+                case 'anggota':
+                    csvContent = 'No Anggota,Nama,Telepon,Alamat,Tanggal Bergabung\n';
+                    csvContent += data.anggota.map(a => 
+                        `${a.no_anggota},"${a.nama}","${a.telepon}","${a.alamat}",${a.tanggal_bergabung}`
+                    ).join('\n');
+                    filename = 'data_anggota.csv';
+                    break;
+                case 'simpanan':
+                    csvContent = 'Tanggal,Anggota,Jenis,Jumlah,Keterangan\n';
+                    csvContent += data.simpanan.map(s => {
+                        const anggota = data.anggota.find(a => a.id === s.anggota_id);
+                        return `${s.tanggal},"${anggota ? anggota.nama : 'Unknown'}","${s.jenis}",${s.jumlah},"${s.keterangan}"`;
+                    }).join('\n');
+                    filename = 'data_simpanan.csv';
+                    break;
+                case 'pinjaman':
+                    csvContent = 'Tanggal,Anggota,Jenis,Jumlah,Bunga,Status,Keperluan\n';
+                    csvContent += data.pinjaman.map(p => {
+                        const anggota = data.anggota.find(a => a.id === p.anggota_id);
+                        return `${p.tanggal},"${anggota ? anggota.nama : 'Unknown'}","${p.jenis}",${p.jumlah},${p.bunga},"${p.status}","${p.keperluan}"`;
+                    }).join('\n');
+                    filename = 'data_pinjaman.csv';
+                    break;
+                case 'shu':
+                    csvContent = 'Tahun,Pendapatan,Biaya,SHU Bersih,Status,Keterangan\n';
+                    csvContent += data.shu.map(s => 
+                        `${s.tahun},${s.pendapatan},${s.biaya},${s.shu_bersih},"${s.status}","${s.keterangan}"`
+                    ).join('\n');
+                    filename = 'data_shu.csv';
+                    break;
+            }
+            
+            const blob = new Blob([csvContent], { type: 'text/csv' });
+            const url = URL.createObjectURL(blob);
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = filename;
+            link.click();
+            URL.revokeObjectURL(url);
+        }
+
+        function printReport(type) {
+            const printWindow = window.open('', '_blank');
+            let content = '';
+            
+            switch(type) {
+                case 'neraca':
+                    const totalSimpanan = data.simpanan.reduce((sum, s) => sum + s.jumlah, 0);
+                    const totalPinjaman = data.pinjaman.reduce((sum, p) => sum + p.jumlah, 0);
+                    content = `
+                        <h2>NERACA KOPERASI</h2>
+                        <h3>${data.settings.namaKoperasi}</h3>
+                        <p>Per ${new Date().toLocaleDateString('id-ID')}</p>
+                        <table border="1" style="width:100%; border-collapse: collapse;">
+                            <tr><th colspan="2">AKTIVA</th></tr>
+                            <tr><td>Kas</td><td>${formatCurrency(totalSimpanan - totalPinjaman)}</td></tr>
+                            <tr><td>Pinjaman Anggota</td><td>${formatCurrency(totalPinjaman)}</td></tr>
+                            <tr><th>Total Aktiva</th><th>${formatCurrency(totalSimpanan)}</th></tr>
+                            <tr><th colspan="2">PASSIVA</th></tr>
+                            <tr><td>Simpanan Anggota</td><td>${formatCurrency(totalSimpanan)}</td></tr>
+                            <tr><th>Total Passiva</th><th>${formatCurrency(totalSimpanan)}</th></tr>
+                        </table>
+                    `;
+                    break;
+                case 'laba-rugi':
+                    const totalBunga = data.pinjaman.reduce((sum, p) => sum + (p.bunga_terbayar || 0), 0);
+                    const totalSHU = data.shu.reduce((sum, s) => sum + s.shu_bersih, 0);
+                    content = `
+                        <h2>LAPORAN LABA RUGI</h2>
+                        <h3>${data.settings.namaKoperasi}</h3>
+                        <p>Tahun ${data.settings.tahunBuku}</p>
+                        <table border="1" style="width:100%; border-collapse: collapse;">
+                            <tr><th colspan="2">PENDAPATAN</th></tr>
+                            <tr><td>Pendapatan Bunga</td><td>${formatCurrency(totalBunga)}</td></tr>
+                            <tr><th>Total Pendapatan</th><th>${formatCurrency(totalBunga)}</th></tr>
+                            <tr><th colspan="2">BIAYA</th></tr>
+                            <tr><td>Biaya Operasional</td><td>Rp 0</td></tr>
+                            <tr><th>Total Biaya</th><th>Rp 0</th></tr>
+                            <tr><th>Sisa Hasil Usaha</th><th>${formatCurrency(totalSHU)}</th></tr>
+                        </table>
+                    `;
+                    break;
+                case 'kas':
+                    content = `
+                        <h2>LAPORAN ARUS KAS</h2>
+                        <h3>${data.settings.namaKoperasi}</h3>
+                        <p>Periode ${new Date().getFullYear()}</p>
+                        <table border="1" style="width:100%; border-collapse: collapse;">
+                            <tr><th>Tanggal</th><th>Keterangan</th><th>Masuk</th><th>Keluar</th><th>Saldo</th></tr>
+                        </table>
+                    `;
+                    break;
+            }
+            
+            printWindow.document.write(`
+                <html>
+                <head>
+                    <title>Laporan ${type}</title>
+                    <style>
+                        body { font-family: Arial, sans-serif; margin: 20px; }
+                        h2, h3 { text-align: center; margin: 10px 0; }
+                        table { margin: 20px 0; }
+                        th, td { padding: 8px; text-align: left; }
+                        th { background-color: #f0f0f0; }
+                    </style>
+                </head>
+                <body>${content}</body>
+                </html>
+            `);
+            printWindow.document.close();
+            printWindow.print();
+        }
+
+        // Utility Functions
+        function formatCurrency(amount) {
+            return new Intl.NumberFormat('id-ID', {
+                style: 'currency',
+                currency: 'IDR',
+                minimumFractionDigits: 0
+            }).format(amount);
+        }
+
+        function formatNumber(num) {
+            return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+        }
+
+        function parseFormattedNumber(str) {
+            return parseInt(str.replace(/\./g, '')) || 0;
+        }
+
+        function formatNumberInput(input) {
+            let value = input.value.replace(/\./g, '');
+            if (value && !isNaN(value)) {
+                input.value = formatNumber(value);
+            }
+        }
+
+        function formatDate(dateString) {
+            const date = new Date(dateString);
+            const months = [
+                'Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni',
+                'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'
+            ];
+            
+            const day = date.getDate();
+            const month = months[date.getMonth()];
+            const year = date.getFullYear();
+            
+            return `${day} ${month} ${year}`;
+        }
+
+        function updateSelects() {
+            const selectAnggotaSimpanan = document.getElementById('select-anggota-simpanan');
+            const selectAnggotaPinjaman = document.getElementById('select-anggota-pinjaman');
+            
+            const options = data.anggota.map(anggota => 
+                `<option value="${anggota.id}">${anggota.nama} (${anggota.no_anggota})</option>`
+            ).join('');
+            
+            selectAnggotaSimpanan.innerHTML = '<option value="">Pilih Anggota</option>' + options;
+            selectAnggotaPinjaman.innerHTML = '<option value="">Pilih Anggota</option>' + options;
+        }
+
+        // Recent transactions for dashboard
+        let recentTransactions = [];
+
+        function addTransaction(type, anggota, jenis, jumlah) {
+            recentTransactions.unshift({
+                tanggal: new Date().toISOString().split('T')[0],
+                anggota,
+                jenis: `${type} - ${jenis}`,
+                jumlah
+            });
+            
+            // Keep only last 10 transactions
+            if (recentTransactions.length > 10) {
+                recentTransactions = recentTransactions.slice(0, 10);
+            }
+            
+            updateRecentTransactions();
+        }
+
+        function updateRecentTransactions() {
+            const tbody = document.getElementById('recent-transactions');
+            if (recentTransactions.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="4" class="text-center py-4 text-gray-500">Belum ada transaksi</td></tr>';
+                return;
+            }
+            
+            tbody.innerHTML = recentTransactions.map(t => `
+                <tr>
+                    <td class="py-2">${formatDate(t.tanggal)}</td>
+                    <td class="py-2">${t.anggota}</td>
+                    <td class="py-2">${t.jenis}</td>
+                    <td class="py-2">${t.jumlah > 0 ? formatCurrency(t.jumlah) : '-'}</td>
+                </tr>
+            `).join('');
+        }
+
+        function updateDashboard() {
+            // Update stats
+            document.getElementById('total-anggota').textContent = data.anggota.length;
+            
+            const totalSimpanan = data.simpanan.reduce((sum, s) => sum + s.jumlah, 0);
+            document.getElementById('total-simpanan').textContent = formatCurrency(totalSimpanan);
+            
+            const totalPinjaman = data.pinjaman.reduce((sum, p) => sum + p.jumlah, 0);
+            document.getElementById('total-pinjaman').textContent = formatCurrency(totalPinjaman);
+            
+            const totalSHU = data.shu.reduce((sum, s) => sum + s.shu_bersih, 0);
+            document.getElementById('total-shu').textContent = formatCurrency(totalSHU);
+            
+            // Calculate detailed stats for infographic
+            const pendapatanBunga = data.pinjaman.reduce((sum, p) => sum + (p.bunga_terbayar || 0), 0);
+            const pinjamanRegular = data.pinjaman.filter(p => p.jenis === 'regular').reduce((sum, p) => sum + p.jumlah, 0);
+            const pinjamanPending = data.pinjaman.filter(p => p.jenis === 'pending').reduce((sum, p) => sum + p.jumlah, 0);
+            const pelunasan = data.pinjaman.filter(p => p.status === 'lunas').reduce((sum, p) => sum + p.jumlah, 0);
+            const saldoKas = totalSimpanan - totalPinjaman + pendapatanBunga;
+            
+            // Check SHU distribution status
+            const currentYear = new Date().getFullYear();
+            const yearSHU = data.shu.filter(s => s.tahun === currentYear);
+            const shuDistributed = yearSHU.some(s => s.status === 'sudah_distribusi');
+            const statusSHU = shuDistributed ? 'Sudah Distribusi' : 'Belum Distribusi';
+            
+            // Update infographic stats
+            document.getElementById('infographic-anggota').textContent = data.anggota.length;
+            document.getElementById('infographic-simpanan').textContent = formatCurrency(totalSimpanan);
+            document.getElementById('infographic-pendapatan-bunga').textContent = formatCurrency(pendapatanBunga);
+            document.getElementById('infographic-pinjaman-regular').textContent = formatCurrency(pinjamanRegular);
+            document.getElementById('infographic-pinjaman-pending').textContent = formatCurrency(pinjamanPending);
+            document.getElementById('infographic-pelunasan').textContent = formatCurrency(pelunasan);
+            document.getElementById('infographic-saldo-kas').textContent = formatCurrency(saldoKas);
+            document.getElementById('infographic-shu').textContent = formatCurrency(totalSHU);
+            document.getElementById('infographic-status-shu').textContent = statusSHU;
+        }
+
+        // Real-time datetime update
+        function updateDateTime() {
+            const now = new Date();
+            const options = {
+                weekday: 'long',
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit',
+                second: '2-digit',
+                timeZone: 'Asia/Jakarta'
+            };
+            
+            const dateTimeString = now.toLocaleDateString('id-ID', options);
+            document.getElementById('current-datetime').textContent = dateTimeString;
+        }
+
+        // Update datetime every second
+        setInterval(updateDateTime, 1000);
+
+        function updateCharts() {
+            // Chart 1: Simpanan vs Pinjaman
+            const ctx1 = document.getElementById('chartSimpananPinjaman').getContext('2d');
+            const totalSimpanan = data.simpanan.reduce((sum, s) => sum + s.jumlah, 0);
+            const totalPinjaman = data.pinjaman.reduce((sum, p) => sum + p.jumlah, 0);
+            
+            new Chart(ctx1, {
+                type: 'bar',
+                data: {
+                    labels: ['Simpanan', 'Pinjaman'],
+                    datasets: [{
+                        label: 'Jumlah (Rp)',
+                        data: [totalSimpanan, totalPinjaman],
+                        backgroundColor: ['#3b82f6', '#f59e0b']
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            ticks: {
+                                callback: function(value) {
+                                    return formatCurrency(value);
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+            
+            // Chart 2: Jenis Simpanan
+            const ctx2 = document.getElementById('chartJenisSimpanan').getContext('2d');
+            const simpananPokok = data.simpanan.filter(s => s.jenis === 'pokok').reduce((sum, s) => sum + s.jumlah, 0);
+            const simpananWajib = data.simpanan.filter(s => s.jenis === 'wajib').reduce((sum, s) => sum + s.jumlah, 0);
+            const simpananSukarela = data.simpanan.filter(s => s.jenis === 'sukarela').reduce((sum, s) => sum + s.jumlah, 0);
+            
+            new Chart(ctx2, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Pokok', 'Wajib', 'Sukarela'],
+                    datasets: [{
+                        data: [simpananPokok, simpananWajib, simpananSukarela],
+                        backgroundColor: ['#3b82f6', '#10b981', '#8b5cf6']
+                    }]
+                },
+                options: {
+                    responsive: true
+                }
+            });
+        }
+
+        function updateAllTables() {
+            updateAnggotaTable();
+            updateSimpananTable();
+            updatePinjamanTable();
+            updateSHUTable();
+        }
+
+        // Search functionality
+        document.getElementById('search-anggota').addEventListener('input', function(e) {
+            const searchTerm = e.target.value.toLowerCase();
+            const rows = document.querySelectorAll('#table-anggota tr');
+            
+            rows.forEach(row => {
+                if (row.cells.length > 1) {
+                    const text = row.textContent.toLowerCase();
+                    row.style.display = text.includes(searchTerm) ? '' : 'none';
+                }
+            });
+        });
+
+        // Filter functionality
+        document.getElementById('filter-jenis-simpanan').addEventListener('change', function(e) {
+            const filterValue = e.target.value;
+            const rows = document.querySelectorAll('#table-simpanan tr');
+            
+            rows.forEach(row => {
+                if (row.cells.length > 1) {
+                    const jenis = row.cells[2].textContent;
+                    row.style.display = !filterValue || jenis === filterValue ? '' : 'none';
+                }
+            });
+        });
+
+        document.getElementById('filter-status-pinjaman').addEventListener('change', function(e) {
+            const filterValue = e.target.value;
+            const rows = document.querySelectorAll('#table-pinjaman tr');
+            
+            rows.forEach(row => {
+                if (row.cells.length > 1) {
+                    const status = row.cells[5].textContent;
+                    row.style.display = !filterValue || status === filterValue ? '' : 'none';
+                }
+            });
+        });
+
+        // Load settings on page load
+        function loadSettings() {
+            document.getElementById('bunga-regular').value = data.settings.bungaRegular;
+            document.getElementById('bunga-pending').value = data.settings.bungaPending;
+            document.getElementById('bunga-guling').value = data.settings.bungaGuling;
+            document.getElementById('nama-koperasi').value = data.settings.namaKoperasi;
+            document.getElementById('tahun-buku').value = data.settings.tahunBuku;
+            document.getElementById('simpanan-pokok-min').value = formatNumber(data.settings.simpananPokokMin);
+        }
+
+        // Initialize sample data
+        function initializeSampleData() {
+            // Check if data already exists
+            if (data.anggota.length > 0) return;
+            
+            // Add sample members
+            const sampleAnggota = [
+                { nama: 'Bagus Iriyanto' },
+                { nama: 'Mudji Santoso' },
+                { nama: 'Hartani Sri Widadi' },
+                { nama: 'Elisabeth Dwi Heny K' },
+                { nama: 'Margareta Meilinda' },
+                { nama: 'Rosi Dewi Sekarini' },
+                { nama: 'F Indah Tri Wahyuni' },
+                { nama: 'Maria Ririn' },
+                { nama: 'Bayu Andrianto' },
+                { nama: 'Kurniawan Adi Prasetyo' },
+                { nama: 'Kembang bulan jelantik' },
+                { nama: 'Tri Retno Rini ( Mudji)' },
+                { nama: 'Yanti (P wid)' },
+                { nama: 'Grace Natasia' }
+            ];
+            
+            // Add members to data
+            sampleAnggota.forEach((anggota, index) => {
+                const newAnggota = {
+                    id: Date.now() + index,
+                    no_anggota: `A${String(index + 1).padStart(4, '0')}`,
+                    nama: anggota.nama,
+                    telepon: '',
+                    alamat: '',
+                    tanggal_bergabung: '2025-01-01'
+                };
+                data.anggota.push(newAnggota);
+            });
+            
+            // Simpanan wajib amounts per member
+            const simpananWajib = {
+                'Bagus Iriyanto': 100000,
+                'Mudji Santoso': 50000,
+                'Hartani Sri Widadi': 50000,
+                'Elisabeth Dwi Heny K': 100000,
+                'Margareta Meilinda': 50000,
+                'Rosi Dewi Sekarini': 50000,
+                'F Indah Tri Wahyuni': 50000,
+                'Maria Ririn': 100000,
+                'Bayu Andrianto': 50000,
+                'Kurniawan Adi Prasetyo': 50000,
+                'Kembang bulan jelantik': 50000,
+                'Tri Retno Rini ( Mudji)': 50000,
+                'Yanti (P wid)': 50000,
+                'Grace Natasia': 50000
+            };
+            
+            // Simpanan modal (pokok)
+            const simpananModal = {
+                'Bagus Iriyanto': 10000000,
+                'Hartani Sri Widadi': 8500000
+            };
+            
+            // Add simpanan wajib for January to August (8 months)
+            const months = ['2025-01-01', '2025-02-01', '2025-03-01', '2025-04-01', '2025-05-01', '2025-06-01', '2025-07-01', '2025-08-01'];
+            
+            data.anggota.forEach(anggota => {
+                // Add simpanan modal (pokok) if applicable
+                if (simpananModal[anggota.nama]) {
+                    const simpananPokok = {
+                        id: Date.now() + Math.random(),
+                        anggota_id: anggota.id,
+                        jenis: 'pokok',
+                        jumlah: simpananModal[anggota.nama],
+                        keterangan: 'Simpanan Modal Awal',
+                        tanggal: '2025-01-01'
+                    };
+                    data.simpanan.push(simpananPokok);
+                }
+                
+                // Add monthly simpanan wajib
+                if (simpananWajib[anggota.nama]) {
+                    months.forEach((month, monthIndex) => {
+                        const simpananWajibEntry = {
+                            id: Date.now() + Math.random() + monthIndex,
+                            anggota_id: anggota.id,
+                            jenis: 'wajib',
+                            jumlah: simpananWajib[anggota.nama],
+                            keterangan: `Simpanan Wajib Bulan ${monthIndex + 1}`,
+                            tanggal: month
+                        };
+                        data.simpanan.push(simpananWajibEntry);
+                    });
+                }
+            });
+            
+            // Add sample loan data
+            const rosiAnggota = data.anggota.find(a => a.nama === 'Rosi Dewi Sekarini');
+            if (rosiAnggota) {
+                const samplePinjaman = {
+                    id: Date.now() + 1000,
+                    kode_pinjaman: '250205001',
+                    anggota_id: rosiAnggota.id,
+                    jenis: 'regular',
+                    jumlah: 7000000,
+                    bunga: 1,
+                    jangka_waktu: 50,
+                    keperluan: 'Modal usaha',
+                    tanggal: '2025-02-05',
+                    tanggal_akhir: '2029-04-05',
+                    status: 'aktif',
+                    sisa_pinjaman: 6160000,
+                    angsuran_ke: 6,
+                    uang_terbayar: 840000, // 6 × Rp 140,000
+                    bunga_terbayar: 420000, // 6 bulan × Rp 70,000 = Rp 420,000 (bunga yang sudah diterima)
+                    bunga_sd_des: 700000,
+                    rollover: false,
+                    nilai_pokok_angsuran: 140000,
+                    total_pembayaran: 210000
+                };
+                data.pinjaman.push(samplePinjaman);
+            }
+            
+            // Add sample pending loan for Bagus Iriyanto
+            const bagusAnggota = data.anggota.find(a => a.nama === 'Bagus Iriyanto');
+            if (bagusAnggota) {
+                const samplePendingPinjaman = {
+                    id: Date.now() + 2000,
+                    kode_pinjaman: '250301001',
+                    anggota_id: bagusAnggota.id,
+                    jenis: 'pending',
+                    jumlah: 5000000,
+                    bunga: 1.3,
+                    jangka_waktu: 12, // Not really used for pending, but kept for reference
+                    keperluan: 'Modal usaha pending',
+                    tanggal: '2025-03-01',
+                    tanggal_akhir: null, // No end date for pending
+                    status: 'aktif',
+                    sisa_pinjaman: 5000000, // Always full amount
+                    angsuran_ke: 3, // 3 months of interest payments
+                    uang_terbayar: 0, // Always 0 for pending
+                    bunga_terbayar: 195000, // 3 × (5,000,000 × 1.3%) = 3 × 65,000
+                    bunga_sd_des: 0, // Will be calculated dynamically
+                    rollover: false,
+                    nilai_pokok_angsuran: 0, // No principal payment
+                    total_pembayaran: 65000 // Only interest per month
+                };
+                data.pinjaman.push(samplePendingPinjaman);
+            }
+            
+            // Add sample pending loan for Mudji Santoso (example from user request)
+            const mudjiAnggota = data.anggota.find(a => a.nama === 'Mudji Santoso');
+            if (mudjiAnggota) {
+                const mudjiPendingPinjaman = {
+                    id: Date.now() + 3000,
+                    kode_pinjaman: '250301002',
+                    anggota_id: mudjiAnggota.id,
+                    jenis: 'pending',
+                    jumlah: 5000000,
+                    bunga: 1.3,
+                    jangka_waktu: 12, // Not really used for pending, but kept for reference
+                    keperluan: 'Modal usaha pending',
+                    tanggal: '2025-03-01', // Loan date March 1st
+                    tanggal_akhir: null, // No end date for pending
+                    status: 'aktif',
+                    sisa_pinjaman: 5000000, // Always full amount
+                    angsuran_ke: 2, // 2 months of interest payments so far
+                    uang_terbayar: 0, // Always 0 for pending
+                    bunga_terbayar: 130000, // 2 × (5,000,000 × 1.3%) = 2 × 65,000
+                    bunga_sd_des: 0, // Will be calculated dynamically (should be 65,000 × 10 = 650,000)
+                    rollover: false,
+                    nilai_pokok_angsuran: 0, // No principal payment
+                    total_pembayaran: 65000 // Only interest per month
+                };
+                data.pinjaman.push(mudjiPendingPinjaman);
+            }
+            
+            // Add sample rollover loan for Hartani Sri Widadi
+            const hartaniAnggota = data.anggota.find(a => a.nama === 'Hartani Sri Widadi');
+            if (hartaniAnggota) {
+                const hartaniRolloverPinjaman = {
+                    id: Date.now() + 4000,
+                    kode_pinjaman: '250101001',
+                    anggota_id: hartaniAnggota.id,
+                    jenis: 'guling',
+                    jumlah: 1500000, // After rollover (original 1,000,000 + 500,000)
+                    bunga: 2,
+                    jangka_waktu: 12,
+                    keperluan: 'Modal usaha dengan rollover',
+                    tanggal: '2025-01-01', // Original loan date
+                    tanggal_akhir: '2026-01-01',
+                    status: 'aktif',
+                    sisa_pinjaman: 1125000, // After 3 payments of new amount
+                    angsuran_ke: 3, // 3 payments made after rollover
+                    uang_terbayar: 375000, // 3 × Rp 125,000 (new principal payment)
+                    bunga_terbayar: 130000, // 6 months before rollover (1M × 2% × 6) + 3 months after (1.5M × 2% × 3)
+                    bunga_sd_des: 0, // Will be calculated dynamically
+                    rollover: true,
+                    nilai_pokok_angsuran: 125000, // New principal payment after rollover
+                    total_pembayaran: 155000, // New total payment (125,000 + 30,000)
+                    rollover_data: {
+                        tanggal_rollover: '2025-07-01', // Rollover in July
+                        jumlah_awal: 1000000, // Original amount
+                        tambahan_jumlah: 500000, // Additional amount
+                        keterangan: 'Tambahan modal untuk ekspansi usaha'
+                    }
+                };
+                data.pinjaman.push(hartaniRolloverPinjaman);
+            }
+            
+            // Add sample SHU data for testing distribution
+            const sampleSHU = {
+                id: Date.now() + 5000,
+                tahun: 2025,
+                pendapatan: 50000000, // 50 juta pendapatan
+                biaya: 15000000, // 15 juta biaya operasional
+                shu_bersih: 35000000, // 35 juta SHU bersih
+                keterangan: 'SHU tahun 2025 - sample data',
+                tanggal: '2025-12-31',
+                status: 'belum_distribusi'
+            };
+            data.shu.push(sampleSHU);
+            
+            saveData();
+        }
+
+        // SHU Distribution Functions
+        function calculateSHUDistribution() {
+            const tahun = new Date().getFullYear(); // Always use current year
+            
+            // Get total SHU for the year
+            const yearSHU = data.shu.filter(s => s.tahun === tahun);
+            const totalSHUTersedia = yearSHU.reduce((sum, s) => sum + s.shu_bersih, 0);
+            
+            if (totalSHUTersedia === 0) {
+                alert(`Tidak ada data SHU untuk tahun ${tahun}`);
+                return;
+            }
+            
+            // Get percentages from SHU components table
+            const jasaModalComponent = data.shuComponents.find(c => 
+                c.nama.toLowerCase().includes('simpanan') || 
+                c.nama.toLowerCase().includes('modal')
+            );
+            const jasaTransaksiComponent = data.shuComponents.find(c => 
+                c.nama.toLowerCase().includes('transaksi') || 
+                c.nama.toLowerCase().includes('pinjaman')
+            );
+            
+            if (!jasaModalComponent || !jasaTransaksiComponent) {
+                alert('Komponen "Jasa Anggota atas Simpanan" dan "Jasa Anggota atas Transaksi" harus ada dalam tabel komponen SHU');
+                return;
+            }
+            
+            const jasaModalPersen = jasaModalComponent.persentase;
+            const jasaTransaksiPersen = jasaTransaksiComponent.persentase;
+            
+            // Calculate jasa amounts based on components table
+            const totalJasaModal = Math.floor(totalSHUTersedia * jasaModalPersen / 100);
+            const totalJasaTransaksi = Math.floor(totalSHUTersedia * jasaTransaksiPersen / 100);
+            
+            // Calculate totals for percentage calculation
+            const totalSimpananSemua = data.simpanan.reduce((sum, s) => {
+                if (s.jenis === 'pokok' || s.jenis === 'wajib') {
+                    return sum + s.jumlah;
+                }
+                return sum;
+            }, 0);
+            
+            const totalPinjamanSemua = data.pinjaman.reduce((sum, p) => sum + p.jumlah, 0);
+            
+            // Calculate distribution per member
+            const distributionData = data.anggota.map((anggota, index) => {
+                // Calculate member's simpanan (pokok + wajib)
+                const simpananAnggota = data.simpanan
+                    .filter(s => s.anggota_id === anggota.id && (s.jenis === 'pokok' || s.jenis === 'wajib'))
+                    .reduce((sum, s) => sum + s.jumlah, 0);
+                
+                // Calculate member's total pinjaman
+                const pinjamanAnggota = data.pinjaman
+                    .filter(p => p.anggota_id === anggota.id)
+                    .reduce((sum, p) => sum + p.jumlah, 0);
+                
+                // Calculate percentages
+                const persenModal = totalSimpananSemua > 0 ? (simpananAnggota / totalSimpananSemua) * 100 : 0;
+                const persenTransaksi = totalPinjamanSemua > 0 ? (pinjamanAnggota / totalPinjamanSemua) * 100 : 0;
+                
+                // Calculate SHU amounts
+                const shuModal = Math.floor(totalJasaModal * persenModal / 100);
+                const shuTransaksi = Math.floor(totalJasaTransaksi * persenTransaksi / 100);
+                const totalSHUAnggota = shuModal + shuTransaksi;
+                
+                return {
+                    no: index + 1,
+                    nama: anggota.nama,
+                    simpanan: simpananAnggota,
+                    persenModal: persenModal,
+                    shuModal: shuModal,
+                    pinjaman: pinjamanAnggota,
+                    persenTransaksi: persenTransaksi,
+                    shuTransaksi: shuTransaksi,
+                    totalSHU: totalSHUAnggota
+                };
+            });
+            
+            // Update summary
+            document.getElementById('total-shu-tersedia').textContent = formatCurrency(totalSHUTersedia);
+            document.getElementById('total-jasa-modal').textContent = formatCurrency(totalJasaModal);
+            document.getElementById('total-jasa-transaksi').textContent = formatCurrency(totalJasaTransaksi);
+            document.getElementById('total-shu-dibagikan').textContent = formatCurrency(totalJasaModal + totalJasaTransaksi);
+            
+            // Show summary
+            document.getElementById('shu-distribution-summary').classList.remove('hidden');
+            
+            // Update table
+            const tbody = document.getElementById('shu-distribution-body');
+            tbody.innerHTML = distributionData.map((item, index) => {
+                const anggota = data.anggota.find(a => a.nama === item.nama);
+                const idAnggota = anggota ? anggota.no_anggota : `A${String(index + 1).padStart(3, '0')}`;
+                
+                return `
+                <tr class="hover:bg-gray-50">
+                    <td class="border border-gray-400 py-2 px-2 text-center font-medium">${item.no}</td>
+                    <td class="border border-gray-400 py-2 px-2 text-center font-mono font-semibold">${idAnggota}</td>
+                    <td class="border border-gray-400 py-2 px-2 font-medium">${item.nama}</td>
+                    <td class="border border-gray-400 py-2 px-2 text-right">${formatCurrency(item.simpanan).replace('Rp', '').trim()}</td>
+                    <td class="border border-gray-400 py-2 px-2 text-right">${formatCurrency(item.pinjaman).replace('Rp', '').trim()}</td>
+                    <td class="border border-gray-400 py-2 px-2 text-right text-green-600 font-semibold">${formatCurrency(item.shuModal).replace('Rp', '').trim()}</td>
+                    <td class="border border-gray-400 py-2 px-2 text-right text-orange-600 font-semibold">${formatCurrency(item.shuTransaksi).replace('Rp', '').trim()}</td>
+                    <td class="border border-gray-400 py-2 px-2 text-right text-blue-600 font-bold">${formatCurrency(item.totalSHU).replace('Rp', '').trim()}</td>
+                    <td class="border border-gray-400 py-2 px-2 text-right text-purple-600 font-bold">${formatCurrency(item.totalSHU).replace('Rp', '').trim()}</td>
+                    <td class="border border-gray-400 py-2 px-2 text-center">
+                        <div class="h-8 border-b border-gray-300 w-full"></div>
+                    </td>
+                </tr>
+            `;
+            }).join('');
+            
+            // Add totals row
+            const totalSHUDibagikan = distributionData.reduce((sum, item) => sum + item.totalSHU, 0);
+            const totalSHUModal = distributionData.reduce((sum, item) => sum + item.shuModal, 0);
+            const totalSHUTransaksi = distributionData.reduce((sum, item) => sum + item.shuTransaksi, 0);
+            
+            tbody.innerHTML += `
+                <tr class="bg-gray-200 font-bold border-t-2 border-gray-600">
+                    <td class="border border-gray-400 py-3 px-2 text-center" colspan="3">TOTAL</td>
+                    <td class="border border-gray-400 py-3 px-2 text-right font-bold">${formatCurrency(totalSimpananSemua).replace('Rp', '').trim()}</td>
+                    <td class="border border-gray-400 py-3 px-2 text-right font-bold">${formatCurrency(totalPinjamanSemua).replace('Rp', '').trim()}</td>
+                    <td class="border border-gray-400 py-3 px-2 text-right text-green-600 font-bold">${formatCurrency(totalSHUModal).replace('Rp', '').trim()}</td>
+                    <td class="border border-gray-400 py-3 px-2 text-right text-orange-600 font-bold">${formatCurrency(totalSHUTransaksi).replace('Rp', '').trim()}</td>
+                    <td class="border border-gray-400 py-3 px-2 text-right text-blue-600 font-bold text-lg">${formatCurrency(totalSHUDibagikan).replace('Rp', '').trim()}</td>
+                    <td class="border border-gray-400 py-3 px-2 text-right text-purple-600 font-bold text-lg">${formatCurrency(totalSHUDibagikan).replace('Rp', '').trim()}</td>
+                    <td class="border border-gray-400 py-3 px-2 text-center font-bold">-</td>
+                </tr>
+            `;
+            
+            // Store distribution data for export
+            window.currentSHUDistribution = {
+                tahun: tahun,
+                jasaModalPersen: jasaModalPersen,
+                jasaTransaksiPersen: jasaTransaksiPersen,
+                totalSHUTersedia: totalSHUTersedia,
+                totalJasaModal: totalJasaModal,
+                totalJasaTransaksi: totalJasaTransaksi,
+                data: distributionData,
+                totalSimpananSemua: totalSimpananSemua,
+                totalPinjamanSemua: totalPinjamanSemua
+            };
+        }
+        
+        function printSHUDistribution() {
+            if (!window.currentSHUDistribution) {
+                alert('Silakan hitung distribusi SHU terlebih dahulu');
+                return;
+            }
+            
+            const dist = window.currentSHUDistribution;
+            const printWindow = window.open('', '_blank');
+            
+            let tableRows = '';
+            dist.data.forEach((item, index) => {
+                const anggota = data.anggota.find(a => a.nama === item.nama);
+                const idAnggota = anggota ? anggota.no_anggota : `A${String(index + 1).padStart(3, '0')}`;
+                
+                tableRows += `
+                    <tr>
+                        <td style="border: 1px solid #000; padding: 4px; text-align: center;">${item.no}</td>
+                        <td style="border: 1px solid #000; padding: 4px; text-align: center; font-family: monospace;">${idAnggota}</td>
+                        <td style="border: 1px solid #000; padding: 4px;">${item.nama}</td>
+                        <td style="border: 1px solid #000; padding: 4px; text-align: right;">${formatCurrency(item.simpanan).replace('Rp', '').trim()}</td>
+                        <td style="border: 1px solid #000; padding: 4px; text-align: right;">${formatCurrency(item.pinjaman).replace('Rp', '').trim()}</td>
+                        <td style="border: 1px solid #000; padding: 4px; text-align: right;">${formatCurrency(item.shuModal).replace('Rp', '').trim()}</td>
+                        <td style="border: 1px solid #000; padding: 4px; text-align: right;">${formatCurrency(item.shuTransaksi).replace('Rp', '').trim()}</td>
+                        <td style="border: 1px solid #000; padding: 4px; text-align: right; font-weight: bold;">${formatCurrency(item.totalSHU).replace('Rp', '').trim()}</td>
+                        <td style="border: 1px solid #000; padding: 4px; text-align: right; font-weight: bold;">${formatCurrency(item.totalSHU).replace('Rp', '').trim()}</td>
+                        <td style="border: 1px solid #000; padding: 4px; height: 30px;"></td>
+                    </tr>
+                `;
+            });
+            
+            // Add totals
+            const totalSHUDibagikan = dist.data.reduce((sum, item) => sum + item.totalSHU, 0);
+            const totalSHUModal = dist.data.reduce((sum, item) => sum + item.shuModal, 0);
+            const totalSHUTransaksi = dist.data.reduce((sum, item) => sum + item.shuTransaksi, 0);
+            
+            tableRows += `
+                <tr style="background-color: #f0f0f0; font-weight: bold;">
+                    <td style="border: 1px solid #000; padding: 8px; text-align: center;" colspan="3">TOTAL</td>
+                    <td style="border: 1px solid #000; padding: 8px; text-align: right;">${formatCurrency(dist.totalSimpananSemua).replace('Rp', '').trim()}</td>
+                    <td style="border: 1px solid #000; padding: 8px; text-align: right;">${formatCurrency(dist.totalPinjamanSemua).replace('Rp', '').trim()}</td>
+                    <td style="border: 1px solid #000; padding: 8px; text-align: right;">${formatCurrency(totalSHUModal).replace('Rp', '').trim()}</td>
+                    <td style="border: 1px solid #000; padding: 8px; text-align: right;">${formatCurrency(totalSHUTransaksi).replace('Rp', '').trim()}</td>
+                    <td style="border: 1px solid #000; padding: 8px; text-align: right; font-size: 14px;">${formatCurrency(totalSHUDibagikan).replace('Rp', '').trim()}</td>
+                    <td style="border: 1px solid #000; padding: 8px; text-align: right; font-size: 14px;">${formatCurrency(totalSHUDibagikan).replace('Rp', '').trim()}</td>
+                    <td style="border: 1px solid #000; padding: 8px; text-align: center;">-</td>
+                </tr>
+            `;
+            
+            const content = `
+                <html>
+                <head>
+                    <title>Distribusi SHU Per Anggota Tahun ${dist.tahun}</title>
+                    <style>
+                        body { 
+                            font-family: Arial, sans-serif; 
+                            margin: 20px; 
+                            font-size: 10px;
+                        }
+                        .header { 
+                            text-align: center; 
+                            margin-bottom: 20px; 
+                        }
+                        .header h1 { 
+                            margin: 5px 0; 
+                            font-size: 16px; 
+                            font-weight: bold;
+                        }
+                        .header h2 { 
+                            margin: 5px 0; 
+                            font-size: 14px; 
+                        }
+                        .header h3 { 
+                            margin: 5px 0; 
+                            font-size: 12px; 
+                        }
+                        table { 
+                            width: 100%; 
+                            border-collapse: collapse; 
+                            margin: 20px 0; 
+                        }
+                        th { 
+                            border: 1px solid #000; 
+                            padding: 6px; 
+                            text-align: center; 
+                            background-color: #e6f3ff; 
+                            font-weight: bold;
+                            font-size: 9px;
+                        }
+                        .summary {
+                            margin: 20px 0;
+                            padding: 10px;
+                            background-color: #f9f9f9;
+                            border: 1px solid #ddd;
+                        }
+                        .signature-section {
+                            margin-top: 40px;
+                            display: flex;
+                            justify-content: space-between;
+                        }
+                        .signature-box {
+                            text-align: center;
+                            width: 200px;
+                        }
+                        @media print {
+                            body { margin: 10px; }
+                            .no-print { display: none; }
+                        }
+                    </style>
+                </head>
+                <body>
+                    <div class="header">
+                        <h1>DISTRIBUSI SHU PER ANGGOTA</h1>
+                        <h2>${data.settings.namaKoperasi}</h2>
+                        <h3>TAHUN BUKU ${dist.tahun}</h3>
+                    </div>
+                    
+                    <div class="summary">
+                        <strong>RINGKASAN DISTRIBUSI:</strong><br>
+                        Total SHU Tersedia: <strong>${formatCurrency(dist.totalSHUTersedia)}</strong><br>
+                        Jasa Modal (${dist.jasaModalPersen}%): <strong>${formatCurrency(dist.totalJasaModal)}</strong><br>
+                        Jasa Transaksi (${dist.jasaTransaksiPersen}%): <strong>${formatCurrency(dist.totalJasaTransaksi)}</strong><br>
+                        Total Dibagikan: <strong>${formatCurrency(dist.totalJasaModal + dist.totalJasaTransaksi)}</strong>
+                    </div>
+                    
+                    <table>
+                        <thead>
+                            <tr>
+                                <th rowspan="2">NO</th>
+                                <th rowspan="2">ID ANGGOTA</th>
+                                <th rowspan="2">NAMA ANGGOTA</th>
+                                <th colspan="2" style="background-color: #e8f5e8;">DISTRIBUSI ANGGOTA</th>
+                                <th colspan="2" style="background-color: #fff3cd;">SHU ANGGOTA</th>
+                                <th rowspan="2" style="background-color: #e6f3ff;">JUMLAH SHU</th>
+                                <th rowspan="2" style="background-color: #f3e5f5;">SHU DIBAGIKAN</th>
+                                <th rowspan="2">TANDA TANGAN</th>
+                            </tr>
+                            <tr>
+                                <th style="background-color: #e8f5e8;">MODAL<br>(SP+SR)</th>
+                                <th style="background-color: #e8f5e8;">TRANSAKSI</th>
+                                <th style="background-color: #fff3cd;">ATAS MODAL</th>
+                                <th style="background-color: #fff3cd;">ATAS TRANSAKSI</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${tableRows}
+                        </tbody>
+                    </table>
+                    
+                    <div class="signature-section">
+                        <div class="signature-box">
+                            <p>Mengetahui,<br>Ketua Koperasi</p>
+                            <br><br><br>
+                            <p>(_____________________)</p>
+                        </div>
+                        <div class="signature-box">
+                            <p>Rembang, ${new Date().toLocaleDateString('id-ID', {day: 'numeric', month: 'long', year: 'numeric'})}<br>Bendahara</p>
+                            <br><br><br>
+                            <p>(_____________________)</p>
+                        </div>
+                    </div>
+                </body>
+                </html>
+            `;
+            
+            printWindow.document.write(content);
+            printWindow.document.close();
+            printWindow.print();
+        }
+
+        function exportSHUDistribution() {
+            if (!window.currentSHUDistribution) {
+                alert('Silakan hitung distribusi SHU terlebih dahulu');
+                return;
+            }
+            
+            const dist = window.currentSHUDistribution;
+            let csvContent = `DISTRIBUSI SHU PER ANGGOTA TAHUN ${dist.tahun}\n`;
+            csvContent += `${data.settings.namaKoperasi}\n\n`;
+            csvContent += `Total SHU Tersedia,${formatCurrency(dist.totalSHUTersedia)}\n`;
+            csvContent += `Jasa Modal (${dist.jasaModalPersen}%),${formatCurrency(dist.totalJasaModal)}\n`;
+            csvContent += `Jasa Transaksi (${dist.jasaTransaksiPersen}%),${formatCurrency(dist.totalJasaTransaksi)}\n`;
+            csvContent += `Total Dibagikan,${formatCurrency(dist.totalJasaModal + dist.totalJasaTransaksi)}\n\n`;
+            
+            csvContent += 'No,ID Anggota,Nama Anggota,Modal (SP+SR),Transaksi,SHU Atas Modal,SHU Atas Transaksi,Jumlah SHU,SHU Dibagikan\n';
+            
+            dist.data.forEach((item, index) => {
+                const anggota = data.anggota.find(a => a.nama === item.nama);
+                const idAnggota = anggota ? anggota.no_anggota : `A${String(index + 1).padStart(3, '0')}`;
+                csvContent += `${item.no},"${idAnggota}","${item.nama}",${item.simpanan},${item.pinjaman},${item.shuModal},${item.shuTransaksi},${item.totalSHU},${item.totalSHU}\n`;
+            });
+            
+            // Add totals
+            const totalSHUDibagikan = dist.data.reduce((sum, item) => sum + item.totalSHU, 0);
+            const totalSHUModal = dist.data.reduce((sum, item) => sum + item.shuModal, 0);
+            const totalSHUTransaksi = dist.data.reduce((sum, item) => sum + item.shuTransaksi, 0);
+            
+            csvContent += `TOTAL,,,${dist.totalSimpananSemua},${dist.totalPinjamanSemua},${totalSHUModal},${totalSHUTransaksi},${totalSHUDibagikan},${totalSHUDibagikan}\n`;
+            
+            const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+            const url = URL.createObjectURL(blob);
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = `distribusi_shu_${dist.tahun}.csv`;
+            link.click();
+            URL.revokeObjectURL(url);
+        }
+
+
+
+        // Initialize app
+        document.addEventListener('DOMContentLoaded', function() {
+            loadData();
+            initializeSampleData(); // Add this line to load sample data
+            loadSettings();
+            showPage('dashboard');
+            updateDateTime(); // Initialize datetime immediately
+            
+            // Set default dates for report
+            const today = new Date();
+            const firstDay = new Date(today.getFullYear(), today.getMonth(), 1);
+            document.getElementById('dari-tanggal').value = firstDay.toISOString().split('T')[0];
+            document.getElementById('sampai-tanggal').value = today.toISOString().split('T')[0];
+        });
+
+        // Close modals when clicking outside
+        document.addEventListener('click', function(e) {
+            if (e.target.classList.contains('modal')) {
+                e.target.classList.remove('show');
+            }
+        });
+    </script>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9740fe3eb6096476',t:'MTc1NjAxOTA0MS4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</html>
